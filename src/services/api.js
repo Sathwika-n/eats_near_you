@@ -5,7 +5,8 @@ import axios from "axios";
 
 // Create an Axios instance with the base URL
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL:
+    "https://project-backend-cga6hde7akg0g5c8.centralus-01.azurewebsites.net", //import.meta.env.VITE_API_URL,
 });
 
 export const loginUser = async (postData) => {
