@@ -17,8 +17,13 @@
       "serve": "/index.html"
     },
     {
-      "route": "/*",
+      "route": "/",
       "serve": "/index.html"
+    },
+    {
+      "route": "/*",
+      "serve": "/index.html",
+      "statusCode": 200
     }
   ]
 }
