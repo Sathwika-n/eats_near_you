@@ -23,7 +23,8 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Loader from "./Loader";
 import "./loader.scss";
 
-const clientId = "YOUR_GOOGLE_CLIENT_ID"; // Replace with your Google Client ID
+const clientId =
+  "http://136635546864-vbg6659ri8m8mgl5n4jgj5e0ck27auq7.apps.googleusercontent.com"; // Replace with your Google Client ID
 
 function LoginPage({ setIsLoggedIn }) {
   const [isSignUp, setIsSignUp] = useState(true); // Toggle between login and signup
