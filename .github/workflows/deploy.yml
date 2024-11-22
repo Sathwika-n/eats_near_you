@@ -1,0 +1,42 @@
+name: Deploy React + Vite App to Azure Static Web Apps
+
+on:
+  push:
+    branches:
+      - main # Triggers deployment on push to the main branch
+  pull_request:
+    branches:
+      - main # Runs on pull requests targeting the main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # Step 3: Install dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # Step 4: Build the Vite app
+      - name: Build Vite App
+        run: npm run build
+
+      # Step 5: Deploy to Azure Static Web Apps
+      - name: Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_CREDENTIALS }}
+          action: deploy # Specify the action explicitly
+          app_location: . # Root directory of the app
+          output_location: dist # Directory of build output
+          api_location: # Optional: Specify if there's an API folder
