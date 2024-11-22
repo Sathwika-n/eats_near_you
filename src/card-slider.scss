@@ -1,0 +1,76 @@
+/* Container for the slider */
+.slider-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 20px auto;
+  overflow: hidden; /* Hide cards that are off-screen */
+}
+
+/* Card slider container */
+.card-slider {
+  display: flex;
+  transition: transform 0.5s ease-in-out; /* Smooth transition for sliding */
+}
+
+/* Style individual cards */
+.card {
+  flex: 0 0 auto; /* Prevent cards from stretching */
+  margin: 0 10px; /* Add spacing between cards */
+  box-sizing: border-box;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 23%; /* Default width for 4 cards on desktop */
+}
+
+/* Navigation buttons */
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 50%;
+  font-size: 20px;
+  z-index: 1;
+}
+
+.prev-btn {
+  left: 10px;
+}
+
+.next-btn {
+  right: 10px;
+}
+
+/* Responsive Styles */
+
+/* For screens larger than 768px (e.g. desktops) */
+@media (min-width: 768px) {
+  .card {
+    width: 23%; /* 4 cards displayed */
+  }
+}
+
+/* For screens smaller than 768px (tablets and below) */
+@media (max-width: 768px) {
+  .card {
+    width: 90%; /* 1 card displayed */
+  }
+}
+
+/* For very small screens (mobile phones) */
+@media (max-width: 480px) {
+  .card {
+    width: 100%; /* 1 card displayed, taking full width */
+  }
+}

@@ -1,0 +1,202 @@
+[
+  {
+    "name": "Poorna Restaurant",
+    "address": "NH44, to, Secretariat Rd, beside Ravindra Bharathi, Saifabad, Khairtabad, Hyderabad",
+    "rating": 4.7,
+    "id": "ChIJiYlHD56XyzsRHbU630S4Brg",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "THE MAHBOOB BIRYANI",
+    "address": "No.3-6-362/13, Ground Floor, Street No. 20, Himayatnagar, Hyderabad",
+    "rating": 4.7,
+    "id": "ChIJ1zbg0_WZyzsRGRB3JNxIaiY",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Capital Hotel - Restaurant & Banquets - Hyderguda",
+    "address": "Hyderguda-Basheerbagh Road, Opposite Old MLA Quarters Hyderguda, opposite Old MLA Quarters, Hyderabad",
+    "rating": 4.6,
+    "id": "ChIJVR6buDSZyzsRWvt-wd8KZG4",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Leon's Burgers & Wings Himayat Nagar",
+    "address": "Ground Floor, Paras Chambers, next to Niloufer Cafe, Venkata swamy Nagar, Himayatnagar, Hyderabad",
+    "rating": 4.6,
+    "id": "ChIJ7ZFYKN6ZyzsRAz3sVNiNPXE",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "THE EXOTIC SHAWARMA",
+    "address": "Shop No. 1-2, 288/31/3, Indirapark Cross Road, opp. to NTR Stadium Road, beside axis bank ATM, Poolbagh, Aravindra Nagar, Domalguda, Himayatnagar, Hyderabad",
+    "rating": 4.6,
+    "id": "ChIJo2vErEyXyzsR_3gKkE5epO0",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Bagara Ruchulu",
+    "address": "Kuchkulla House, Himayat Nagar Rd, above Naturals ice cream, AP State Housing Board, Basheer Bagh, Hyderabad",
+    "rating": 4.4,
+    "id": "ChIJF6E16yyZyzsRyWbzUYlWf7o",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Rice Bowl",
+    "address": "CF2M+HP5, Urdu Hall Lane, Himayatnagar, opposite PMJ Jewellers, Hyderabad",
+    "rating": 4.2,
+    "id": "ChIJ1VUA5NyZyzsRRleaYDGu9KM",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Minerva Coffee Shop",
+    "address": "3-6-199/1, opp. ब्रांड फैक्ट्री, AP State Housing Board, Himayatnagar, Hyderabad",
+    "rating": 4.2,
+    "id": "ChIJybdPGt2ZyzsRhnkXr9gvKcM",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Cafe Bahar",
+    "address": "3-5, 815/A, Old MLA Quarters Rd, Old MLA Quarters, Avanti Nagar, Himayatnagar, Hyderabad",
+    "rating": 4.2,
+    "id": "ChIJXwoQ3d6ZyzsRt9dtZ7q3HQE",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "La Milano Pizzeria",
+    "address": "Shop No 2A, Sri Sai Mithai Mansion, 3-6-431, Devi Laxmi Bagh, Domalguda, Himayatnagar, Hyderabad",
+    "rating": 4.2,
+    "id": "ChIJ7SV_aEWZyzsR6FNkARUHfIM",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "The Joint Shawarma & more",
+    "address": "Mahek, 3-5-885/G-04/A, Rasfa, Himayatnagar, Hyderabad",
+    "rating": 4.2,
+    "id": "ChIJgw8LejGZyzsRCPIZD75_PSI",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Makobrew Cafe, Restaurant & Banquet - Himayatnagar",
+    "address": "4th Floor, 6-289, Plot No.3, Hyderguda Main Rd, beside D-Mart, Avanti Nagar, Himayatnagar, Hyderabad",
+    "rating": 4.2,
+    "id": "ChIJtZoGBMaZyzsRWbOLQmdHdd0",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Shanbhag's Veg-Park Restaurant",
+    "address": "3-6-355/16, Basheer Bagh, Chandra Nagar, Basheer Bagh, Hyderabad",
+    "rating": 4.1,
+    "id": "ChIJM9Te6t-ZyzsRsAjVu8Jf0u0",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Shree Santosh Family Dhaba",
+    "address": "Ground Floor, Paras Chambers, 3-5-890, Old MLA Quarters Rd, Vittalwadi, Himayatnagar, Hyderabad",
+    "rating": 4.1,
+    "id": "ChIJbc_8b9uZyzsRljPB8OG4O6Q",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Bikanervala",
+    "address": "Unit No. 3, Doshi Square, 5-821, Hyderguda-Basheerbagh Rd, Gun Foundry, Basheer Bagh, Hyderabad",
+    "rating": 4.1,
+    "id": "ChIJhaz65d2ZyzsRisXn-fW1K8U",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Gufaa Ohri’s Cuisine Court",
+    "address": "5-9-30/16-20, opposite Old Gandhi Medical College, New MLA Quarters, Basheer Bagh, Hyderabad",
+    "rating": 4.1,
+    "id": "ChIJk9PkEuCZyzsR2E_9pVbWzjM",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Alex's Kitchen",
+    "address": "Anasuya Complex, Ground Floor, 3-6-10, Liberty Rd, Himayatnagar, Hyderabad",
+    "rating": 4,
+    "id": "ChIJK1tA9OCZyzsR2ftg60KsOQI",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Swaad of South",
+    "address": "Ground Floor, Doshi Chambers, 3-6-327 & 328, next to police commissioner office, Basheer Bagh, Hyderabad",
+    "rating": 4,
+    "id": "ChIJ-0464AKZyzsRBOsJTYAqFpM",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Blue Fox",
+    "address": "Door No. 3, 6, Himayat Nagar Rd, opposite ब्रांड फैक्ट्री, AP State Housing Board, Himayatnagar, Hyderabad",
+    "rating": 4,
+    "id": "ChIJXzdd4dyZyzsRJ953vfUPU8k",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  },
+  {
+    "name": "Astoria restaurant",
+    "address": "Telangana Secretariat Rd, Central Secretariat, Khairtabad, Hyderabad",
+    "rating": 3.8,
+    "id": "ChIJGWxCAQCXyzsRzgSUML1hCb0",
+    "latitude": 17.406498,
+    "longitude": 78.47724389999999,
+    "radius": 1000,
+    "imageUrl": "https://via.placeholder.com/300"
+  }
+]

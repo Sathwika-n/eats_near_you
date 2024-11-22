@@ -1,34 +1,71 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import React, { useEffect, useState } from "react";
+import { Box } from "@mui/material";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+import Navbar from "./Navbar";
+import HomePage from "./HomePage";
+import LoginPage from "./LoginPage";
+import Profile from "./account/Profile";
+import ChangePassword from "./account/ChangePassword";
+import RestaurantDetail from "./RestaurantDetail";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check sessionStorage on initial load
+  useEffect(() => {
+    const loggedInStatus = sessionStorage.getItem("isLoggedIn");
+    setIsLoggedIn(loggedInStatus === "true");
+  }, []);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("isLoggedIn");
+    sessionStorage.removeItem("token");
+    setIsLoggedIn(false);
+    navigate("/"); // Redirect to login page
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Azure dep</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Box className="main-class">
+      {isLoggedIn && location.pathname !== "/" && (
+        <Navbar onLogout={handleLogout} />
+      )}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            isLoggedIn ? (
+              <Navigate to="/home" />
+            ) : (
+              <LoginPage setIsLoggedIn={setIsLoggedIn} />
+            )
+          }
+        />
+        <Route
+          path="/home"
+          element={isLoggedIn ? <HomePage /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/profile"
+          element={isLoggedIn ? <Profile /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/changePassword"
+          element={isLoggedIn ? <ChangePassword /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/restaurantDetail"
+          element={isLoggedIn ? <RestaurantDetail /> : <Navigate to="/" />}
+        />
+      </Routes>
+    </Box>
   );
 }
 

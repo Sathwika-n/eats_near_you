@@ -1,0 +1,56 @@
+.review-card {
+  max-width: 20.3125rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+
+  .review-details {
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    .name-time {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      .restaurant-info {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        font-size: 14px;
+        color: #666;
+        gap: 0.5rem;
+      }
+    }
+    .rating-location {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      justify-content: flex-start;
+      .restaurant-rating,
+      .restaurant-location {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+      }
+      .rating {
+        display: flex;
+        gap: 0.25rem;
+      }
+    }
+  }
+
+  .restaurant-name {
+    // font-size: 18px;
+    // margin: 0 0 8px;
+    color: #333;
+  }
+
+  .icon {
+    margin-top: 2px;
+    color: #ff9800; /* Star color */
+  }
+}

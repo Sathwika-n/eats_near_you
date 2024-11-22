@@ -1,0 +1,144 @@
+/* Global padding and margin reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.search-container {
+  margin-top: 48px;
+  width: 100vw;
+  // height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  .search-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem;
+    .text-class {
+      font-size: 5rem;
+    }
+    @media (max-width: 768px) {
+      .text-class {
+        font-size: 4rem;
+      }
+    }
+    .button-class {
+      width: 120px;
+      height: 50px;
+      font-size: 18px;
+    }
+    .form-data {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      // align-items: flex-start;/
+      gap: 2rem;
+      .fields {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .location-icon {
+          cursor: "pointer";
+          font-size: 35px;
+        }
+        @media (max-width: 768px) {
+          .location-icon {
+            cursor: "pointer";
+            font-size: 25px;
+          }
+        }
+
+        .textfield-class {
+          width: 100%;
+          height: 3.5rem;
+          display: flex;
+          justify-content: center;
+        }
+        @media (max-width: 768px) {
+          .textfield-class {
+            height: 3rem;
+          }
+        }
+      }
+      .radius {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+        // max-width: 400px;
+      }
+    }
+  }
+  .restaurants-list {
+    width: 80%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    // gap: 2rem;
+  }
+}
+
+// .restaurant-card-wrapper {
+//   display: flex;
+//   justify-content: center;
+//   padding: 0 10px;
+// }
+
+/* Add gap between the cards */
+.slick-slide {
+  padding: 10px; /* Adds space between cards */
+}
+
+/* Customize pagination dots */
+.slick-dots {
+  bottom: -30px; /* Position the dots lower */
+}
+
+.slick-prev,
+.slick-next {
+  color: #000; /* Arrow color */
+  font-size: 20px;
+}
+
+/* Ensure slick arrows are styled */
+.slick-prev:before,
+.slick-next:before {
+  font-size: 30px;
+  color: #000000; /* Customize color of arrows */
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .restaurant-card-wrapper {
+    padding: 0 5px; /* Reduce the gap between cards on smaller screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .restaurant-card-wrapper {
+    padding: 0 5px;
+  }
+
+  .slick-dots li button:before {
+    font-size: 12px; /* Adjust dots size for mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  .restaurant-card-wrapper {
+    padding: 0 3px;
+  }
+
+  .slick-dots li button:before {
+    font-size: 10px; /* Further adjust dots size for smaller mobile screens */
+  }
+}
