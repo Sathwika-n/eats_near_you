@@ -36,7 +36,7 @@ jobs:
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_CREDENTIALS }}
-          action: deploy # Specify the action explicitly
+          action: deploy # Correct action input
           app_location: . # Root directory of the app
           output_location: dist # Directory of build output
           api_location: # Optional: Specify if there's an API folder
