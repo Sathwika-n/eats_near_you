@@ -3,11 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 // import API_BASE_URL from "../config";
 
-// Create an Axios instance with the base URL
+// Create an Axios instance with the base URL from the environment variable
 const api = axios.create({
-  baseURL:
-    "https://project-backend-cga6hde7akg0g5c8.centralus-01.azurewebsites.net", //import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL, // Environment variable
 });
+console.log("Backend API URL:", import.meta.env.VITE_API_URL);
+
 
 export const loginUser = async (postData) => {
   const response = await api.post("/login", postData);
