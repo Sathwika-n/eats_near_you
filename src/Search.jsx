@@ -186,7 +186,7 @@ function Search() {
             <Grid
               item
               size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
-              key={index}
+              key={restaurant.id}
               className="restaurant-card-wrapper"
             >
               <RestaurantCard

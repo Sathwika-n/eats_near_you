@@ -20,7 +20,8 @@ const RestaurantCard = ({
   const queryClient = useQueryClient();
   const locationR = useLocation();
   const navigate = useNavigate();
-  const [isFavoriteCard, setIsFavoriteCard] = useState(isFavorite);
+  const [isFavoriteCard, setIsFavoriteCard] = useState(isFavorite ?? true);
+
   useEffect(() => {
     if (locationR.pathname === "/profile") {
       setIsFavoriteCard(true);
@@ -40,6 +41,7 @@ const RestaurantCard = ({
       queryClient.invalidateQueries(["userFavourites"]);
     },
     onError: (error) => {
+      setIsFavoriteCard((prev) => !prev);
       console.error("Unable to add Favorite", error);
     },
   });
@@ -48,13 +50,16 @@ const RestaurantCard = ({
     mutationFn: removeFavorite, // Ensure addFavorite is the mutation function
     onSuccess: (data) => {
       console.log("Removed Favorite", data);
+      queryClient.invalidateQueries(["userFavourites"]);
     },
     onError: (error) => {
+      setIsFavoriteCard((prev) => !prev);
       console.error("Unable to remove Favorite", error);
     },
   });
 
   const handleFavoriteToggle = () => {
+    setIsFavoriteCard((prev) => !prev);
     if (isFavoriteCard) {
       removeMutation.mutate({
         user_id: JSON.parse(sessionStorage.getItem("user")).user_id,

@@ -78,7 +78,6 @@ export const useUserFavourites = (userId) => {
     queryKey: ["userFavourites", userId],
     queryFn: () => fetchUserFavourites(userId),
     enabled: !!userId, // Ensures query runs only when `userId` is provided
-    staleTime: 300000, // (Optional) Keep data fresh for 5 minutes
   });
 };
 export const useRestaurantDetails = (restaurantId) => {
