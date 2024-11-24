@@ -1,31 +1,23 @@
 import React from "react";
-import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api";
+import { GoogleMap, MarkerF, useLoadScript } from "@react-google-maps/api";
 
 // Map container styling
 const mapContainerStyle = {
-  width: "100%",
-  height: "400px", // Adjust height as needed
+  minWidth: "250px",
+  height: "200px", // Adjust height as needed
 };
 
-// Initial center coordinates
-const center = {
-  lat: 37.7749, // Latitude
-  lng: -122.4194, // Longitude
-};
+export default function GoogleMapComponent({ location }) {
+  const center = location;
 
-// Example marker position
-const markerPosition = {
-  lat: 37.7749, // Latitude
-  lng: -122.4194, // Longitude
-};
-const options = {
-  disableDefaultUI: true, // Disable default UI controls
-  zoomControl: true, // Enable zoom control
-};
-export default function GoogleMapComponent() {
+  const markerPosition = location;
+  const options = {
+    disableDefaultUI: true, // Disable default UI controls
+    zoomControl: true, // Enable zoom control
+  };
   // Load the Google Maps script
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "AIzaSyCwHWPmFhELoeCWKVdVJXDCGUKOwtBHDcE", // Replace with your API key
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, // Replace with your API key
   });
 
   if (loadError) return <div>Error loading maps</div>;
@@ -34,12 +26,16 @@ export default function GoogleMapComponent() {
   return (
     <GoogleMap
       mapContainerStyle={mapContainerStyle}
-      zoom={12} // Adjust zoom level as needed
+      zoom={14} // Adjust zoom level as needed
       center={center}
       options={options}
     >
       {/* Marker */}
-      <Marker position={markerPosition} />
+      <MarkerF
+        position={markerPosition}
+        // Add any desired options here
+      />
+      {/* <Marker position={markerPosition} /> */}
     </GoogleMap>
   );
 }

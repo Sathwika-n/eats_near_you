@@ -97,6 +97,7 @@ function LoginPage({ setIsLoggedIn }) {
     },
     onError: (error) => {
       console.error("Mutation failed!", error?.response?.data?.detail);
+      setMutationState("error");
       setMutationResponse(error?.response?.data?.detail);
       setIsLoading(false);
     },
@@ -108,9 +109,11 @@ function LoginPage({ setIsLoggedIn }) {
       console.log("Mutation succeeded!", data);
       setIsLoading(false);
       setOtpSent(true);
+      setMutationState("success");
+      setMutationResponse(data?.message);
     },
     onError: (error) => {
-      console.error("Mutation failed!", error?.response?.data?.detail);
+      console.error("Mutation failed!", error);
       setMutationResponse(error?.response?.data?.detail);
       setIsLoading(false);
       setOtpSent(false);
@@ -322,6 +325,9 @@ function LoginPage({ setIsLoggedIn }) {
   const toggleSignIn = () => {
     setIsSignUp(false);
     setIsforgotPassword(false);
+    setOtpSent(false);
+    setMutationResponse(null);
+    setMutationState("");
   };
 
   const handleInputChange = (e) => {

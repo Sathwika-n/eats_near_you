@@ -13,4 +13,134 @@
     #dfbaf7 100%
   );
   background: linear-gradient(0deg, #ecffc1 0%, #ffe6cc 50%, #dfbaf7 100%);
+  .restaurant-page {
+    margin-top: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    .restaurant-profile {
+      display: flex;
+      width: calc(100% - 40px);
+      // flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      // max-width: 300px;
+      margin: 16px;
+      box-sizing: border-box;
+      padding: 20px;
+      border-radius: 8px;
+      // min-width: 400px;
+      background: rgba(245, 245, 220, 0.6); /* Beige */
+      border: 1px solid rgba(210, 210, 200, 0.3);
+      gap: 1rem;
+
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      .restaurant-image {
+        border-radius: 0.5rem;
+        max-width: 100%;
+      }
+    }
+    @media (max-width: 768px) {
+      .restaurant-profile {
+        flex-direction: column; /* Stack content vertically */
+        width: calc(100% - 20px); /* Reduce the horizontal margin */
+        padding: 16px; /* Adjust padding for smaller screens */
+        gap: 0.5rem; /* Smaller gap for compact design */
+      }
+    }
+
+    @media (max-width: 480px) {
+      .restaurant-profile {
+        width: calc(100% - 10px); /* Even smaller horizontal margin */
+        padding: 12px; /* Further reduce padding */
+      }
+    }
+
+    .rest-tab {
+      display: flex;
+      .my-reviews {
+        width: calc(100% - 40px); /* 20px left + 20px right */
+        margin: 16px;
+        box-sizing: border-box;
+        padding: 20px;
+        border-radius: 8px;
+        // min-width: 400px;
+        background: rgba(245, 245, 220, 0.6); /* Beige */
+        border: 1px solid rgba(210, 210, 200, 0.3);
+        gap: 1rem;
+
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        .grid {
+          display: flex;
+          // flex-direction: column;
+        }
+        .review-card {
+          min-height: 200px;
+        }
+      }
+      .image-list {
+        display: flex;
+        flex-direction: column;
+        width: calc(100% - 40px);
+        // flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        // max-width: 300px;
+        margin: 16px;
+        box-sizing: border-box;
+        padding: 20px;
+        border-radius: 8px;
+        // min-width: 400px;
+        background: rgba(245, 245, 220, 0.6); /* Beige */
+        border: 1px solid rgba(210, 210, 200, 0.3);
+        gap: 1rem;
+
+        -webkit-backdrop-filter: blur(20px);
+        backdrop-filter: blur(20px);
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .add-review {
+      width: calc(100% - 40px);
+      margin: 16px;
+      box-sizing: border-box;
+      padding: 20px;
+      border-radius: 8px;
+      // min-width: 400px;
+      background: rgba(245, 245, 220, 0.6); /* Beige */
+      border: 1px solid rgba(210, 210, 200, 0.3);
+      gap: 1rem;
+
+      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(20px);
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      .rating-review {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        .text-field-class {
+          width: 100%;
+          // height: 3.5rem;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          border-radius: 25px;
+        }
+      }
+    }
+  }
 }

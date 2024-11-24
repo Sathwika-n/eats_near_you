@@ -49,9 +49,20 @@ export const removeFavorite = async (postData) => {
   return response.data;
 };
 
+export const addReview = async (postData) => {
+  const response = await api.post("/maps/add_review", postData);
+  return response.data;
+};
+
 const fetchUserReviews = async (userId) => {
   const response = await api.get(`/maps/user_reviews_by_user_id`, {
     params: { user_id: userId },
+  });
+  return response.data;
+};
+const fetchUserReviewsByRestaurant = async (restaurant_id) => {
+  const response = await api.get(`/maps/user_reviews_by_restaurant_id`, {
+    params: { restaurant_id: restaurant_id },
   });
   return response.data;
 };
@@ -70,7 +81,13 @@ export const useUserReviews = (userId) => {
     queryKey: ["userReviews", userId],
     queryFn: () => fetchUserReviews(userId),
     enabled: !!userId, // Ensures query runs only when `userId` is provided
-    staleTime: 300000, // (Optional) Keep data fresh for 5 minutes
+  });
+};
+export const useUserReviewsByRestaurant = (restaurant_id) => {
+  return useQuery({
+    queryKey: ["userReviewsByRestaurant", restaurant_id],
+    queryFn: () => fetchUserReviewsByRestaurant(restaurant_id),
+    enabled: !!restaurant_id, // Ensures query runs only when `userId` is provided
   });
 };
 export const useUserFavourites = (userId) => {
@@ -85,7 +102,6 @@ export const useRestaurantDetails = (restaurantId) => {
     queryKey: ["restaurantDetails", restaurantId],
     queryFn: () => fetchRestaurantDetails(restaurantId),
     enabled: !!restaurantId,
-    staleTime: 300000,
   });
 };
 

@@ -125,7 +125,7 @@ const theme = createTheme({
           width: "100%", // Adjust width as needed
           marginTop: 0, // Remove top margin
           marginBottom: 0, // Remove bottom margin
-          width: "18rem",
+          // width: "18rem",
         },
       },
       defaultProps: {

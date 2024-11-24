@@ -28,20 +28,6 @@ const Profile = () => {
     JSON.parse(sessionStorage.getItem("user"))?.user_id
   );
 
-  // State for the form fields
-  const [formData, setFormData] = useState({
-    oldPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-
-  // Error state for validation
-  const [formErrors, setFormErrors] = useState({
-    oldPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-
   // Utility function for title casing
   function toTitleCase(text) {
     return text

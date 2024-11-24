@@ -11,6 +11,7 @@ import Loader from "./Loader";
 import "./search.scss";
 import "./loader.scss";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
+import noImage from "../src/assets/noImage.png";
 
 function Search() {
   const [mutationError, setMutationError] = useState(null);
@@ -191,9 +192,7 @@ function Search() {
             >
               <RestaurantCard
                 name={restaurant.name}
-                imageUrl={
-                  restaurant.photo_url || "https://placehold.co/300x300"
-                }
+                imageUrl={restaurant.photo_url || noImage}
                 rating={restaurant.rating}
                 location={restaurant.address}
                 restaurant_id={restaurant.id}
