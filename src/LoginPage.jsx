@@ -13,6 +13,9 @@ import { useNavigate } from "react-router-dom";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google"; // Import GoogleOAuthProvider
 import "./login.scss";
 import logo from "../public/vite.svg";
+
+import shortLogo from "../src/assets/short-logo.png";
+import FullLogo from "../src/assets/full-logo.png";
 import {
   changePassword,
   forgotPassword,
@@ -410,7 +413,7 @@ function LoginPage({ setIsLoggedIn }) {
       <Grid container className="login-page">
         <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6 }} className="grid-item">
           <Box>
-            <img src={logo} alt="Logo" style={{ height: 32 }} />
+            <img src={shortLogo} alt="Logo" style={{ height: 40 }} />
           </Box>
           <Box
             sx={{
@@ -711,7 +714,41 @@ function LoginPage({ setIsLoggedIn }) {
           item
           size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
           className="grid-item-right"
-        ></Grid>
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <img
+              src={FullLogo}
+              alt="Logo"
+              style={{
+                width: "50%",
+                // height: "50%",
+              }}
+            />
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              // flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              width: "75%",
+            }}
+          >
+            <Typography variant="reviewTitle">
+              "Discover nearby restaurants, explore detailed reviews and photos,
+              and share your own experiences with real-time Google Maps
+              integration. All in one place!"
+            </Typography>
+          </Box>
+        </Grid>
       </Grid>
     </GoogleOAuthProvider>
   );

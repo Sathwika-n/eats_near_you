@@ -8,8 +8,12 @@ import {
   Rating,
   TextField,
   Typography,
+  Dialog,
+  DialogContent,
+  IconButton,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
+import CloseIcon from "@mui/icons-material/Close";
 import {
   addReview,
   useRestaurantDetails,
@@ -35,6 +39,18 @@ function RestaurantDetail() {
   } = useUserReviewsByRestaurant(location.state.restaurant_id);
 
   const [review, setReview] = useState({ rating: 0, review: "" });
+  const [open, setOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedImage("");
+  };
 
   const {
     details: {
@@ -60,13 +76,13 @@ function RestaurantDetail() {
     mutationFn: addReview,
     onSuccess: (data) => {
       console.log("Mutation succeeded!", data);
+      queryClient.invalidateQueries(["userReviewsByRestaurant"]);
       // setMutationResponse(data?.message);
       // setIsLoading(false);
       setReview({
         rating: 0,
         review: "",
       });
-      queryClient.invalidateQueries(["userReviewsByRestaurant"]);
       // setMutationState("success");
     },
     onError: (error) => {
@@ -91,27 +107,48 @@ function RestaurantDetail() {
       ) : (
         <Box className="restaurant-page">
           <Box className="restaurant-profile">
-            <Box>
-              <img
-                className="restaurant-image"
-                src={`https://maps.googleapis.com/maps/api/place/photo?maxheight=200&photoreference=${
-                  photos[0].photo_reference
-                }&key=${
-                  import.meta.env.VITE_GOOGLE_MAPS_API_KEY
-                }&w=248&fit=crop&auto=format`}
-                alt={name}
-              />
-            </Box>
-            <Box sx={{ display: "flex", flexDirection: "column" }}>
-              <Typography variant="title">{name}</Typography>
-              <Typography variant="body">{formatted_address}</Typography>
-              <Typography variant="body">
-                {international_phone_number}
-              </Typography>
-              <Typography variant="body">{website}</Typography>
-              <a href={url} target="_blank" rel="noopener noreferrer">
-                View on Google
-              </a>
+            <Box className="name-image">
+              <Box>
+                <img
+                  className="restaurant-image"
+                  src={`https://maps.googleapis.com/maps/api/place/photo?maxheight=200&photoreference=${
+                    photos[0].photo_reference
+                  }&key=${
+                    import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+                  }&w=248&fit=crop&auto=format`}
+                  alt={name}
+                />
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  maxWidth: { xs: "250px", sm: "100%" },
+                }}
+              >
+                <Typography variant="title">{name}</Typography>
+                <Typography variant="body">{formatted_address}</Typography>
+                <Typography variant="body">
+                  {international_phone_number}
+                </Typography>
+                <Typography variant="body">
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      wordBreak: "break-word", // Break long words
+                      whiteSpace: "normal", // Allow text wrapping
+                      overflowWrap: "break-word", // Break words if necessary
+                    }}
+                  >
+                    {website}
+                  </a>
+                </Typography>
+                <a href={url} target="_blank" rel="noopener noreferrer">
+                  View on Google
+                </a>
+              </Box>
             </Box>
             <GoogleMapComponent location={geometry?.location} />
           </Box>
@@ -125,6 +162,7 @@ function RestaurantDetail() {
                   variant="quilted"
                   // sx={{ width: 300, height: 300 }}
                   cols={5}
+                  // cols={{ xs: 4, sm: 5 }}
                   gap={8}
                 >
                   {photos.map((item, index) => (
@@ -141,11 +179,78 @@ function RestaurantDetail() {
                           import.meta.env.VITE_GOOGLE_MAPS_API_KEY
                         }&w=248&fit=crop&auto=format`}
                         alt={"item.title"}
+                        onClick={() =>
+                          handleImageClick(
+                            `https://maps.googleapis.com/maps/api/place/photo?maxwidth=800&photoreference=${
+                              item.photo_reference
+                            }&key=${
+                              import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+                            }&w=248&fit=crop&auto=format`
+                          )
+                        }
                         loading="lazy"
                       />
                     </ImageListItem>
                   ))}
                 </ImageList>
+                <Dialog
+                  open={open}
+                  onClose={handleClose}
+                  fullWidth
+                  // maxWidth="lg"
+                  sx={{
+                    "& .MuiDialog-paper": {
+                      backgroundColor: "transparent", // Make the dialog's background transparent
+                      boxShadow: "none", // Remove dialog shadow
+                    },
+                  }}
+                  BackdropProps={{
+                    style: {
+                      backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent dark background
+                    },
+                  }}
+                >
+                  {/* Close Button */}
+                  <Box
+                    display="flex"
+                    justifyContent="flex-end"
+                    padding="8px"
+                    bgcolor="transparent"
+                  >
+                    <IconButton
+                      onClick={handleClose}
+                      aria-label="close"
+                      sx={{
+                        color: "white", // White icon for contrast
+                        zIndex: 1, // Ensure it's above the image
+                      }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Box>
+
+                  {/* Dialog Content */}
+                  <DialogContent
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      padding: "16px",
+                      backgroundColor: "transparent",
+                      height: "100vh", // Occupy full height
+                    }}
+                  >
+                    <img
+                      src={selectedImage}
+                      alt="Selected"
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "75vh", // Keep image responsive
+                        objectFit: "contain",
+                      }}
+                    />
+                  </DialogContent>
+                </Dialog>
               </Box>
               <Box className="my-reviews">
                 <Typography variant="category" color="#004687">

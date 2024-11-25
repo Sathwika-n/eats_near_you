@@ -1,28 +1,30 @@
 import React, { useState } from "react";
 import "./contact.scss";
 import { Box, Button, TextField, Typography } from "@mui/material";
+import { userFeedback } from "./services/api";
+import { useMutation } from "@tanstack/react-query";
 
 const ContactUs = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const [feedback, setFeedback] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  const feedbackMutation = useMutation({
+    mutationFn: userFeedback,
+    onSuccess: (data) => {
+      console.log("Mutation succeeded!", data);
+    },
+    onError: (error) => {
+      console.error("Mutation failed!", error?.response?.data?.detail);
+    },
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Form submission logic (e.g., send data to API or email)
-    console.log("Feedback submitted: ", formData);
-    alert("Thank you for your feedback!");
-    setFormData({ name: "", email: "", message: "" });
+    feedbackMutation.mutate({
+      user_id: JSON.parse(sessionStorage.getItem("user"))?.user_id,
+      feedback: feedback,
+    });
+    console.log("Feedback submitted: ", feedback);
+    setFeedback("");
   };
 
   return (
@@ -60,37 +62,39 @@ const ContactUs = () => {
           add? Let us know through our feedback form.
         </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 2,
+          }}
+        >
           <Box>
-            <TextField
-              required
-              name="name"
-              type="text"
-              placeholder="Your Name"
-              value={formData?.name}
-              onChange={handleChange}
-              margin="normal"
-            />
+            <Typography variant="reviewTitle">
+              {JSON.parse(sessionStorage.getItem("user"))?.username}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="reviewTitle">
+              {JSON.parse(sessionStorage.getItem("user"))?.email}
+            </Typography>
           </Box>
           <Box>
             <TextField
-              required
-              name="email"
-              type="email"
-              placeholder="Your Email"
-              value={formData?.email}
-              onChange={handleChange}
-              margin="normal"
-            />
-          </Box>
-          <Box>
-            <TextField
+              className="text-field-class"
+              fullWidth
+              multiline
+              rows={4}
               required
               name="message"
               type="text"
-              placeholder="Your Message"
-              value={formData?.message}
-              onChange={handleChange}
+              placeholder="Please Enter Your Feedback"
+              value={feedback}
+              onChange={(e) => {
+                setFeedback(e.target.value);
+              }}
               margin="normal"
             />
           </Box>
@@ -102,33 +106,10 @@ const ContactUs = () => {
       </Box>
 
       <Box className="social-media">
-        <Typography variant="body">Follow Us for the Latest Updates</Typography>
         <Typography variant="body">
-          Stay connected for dining tips and more:
+          Follow Us for the Latest Updates. Stay connected for dining tips and
+          more:
         </Typography>
-        <Box className="social-links">
-          <a
-            href="https://www.facebook.com/EatsNearYou"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Facebook
-          </a>
-          <a
-            href="https://www.instagram.com/EatsNearYour"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Instagram
-          </a>
-          <a
-            href="https://twitter.com/EatsNearYou"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Twitter
-          </a>
-        </Box>
       </Box>
 
       <Box className="response-time">

@@ -22,7 +22,7 @@ function Search() {
   const [locationError, setLocationError] = useState(null);
   const [searchData, setSearchData] = useState({
     location: "Hyderabad",
-    radius: "150",
+    radius: "10",
   });
 
   const settings = {
@@ -153,15 +153,17 @@ function Search() {
 
           <Box className="radius">
             <Typography variant="body" sx={{ textAlign: "center" }}>
-              Select the radius below to find nearby restaurants
+              Select the radius below to find nearby restaurants (in miles)
             </Typography>
             <Slider2
               value={searchData?.radius} // Bind the state to the slider value
               onChange={handleSliderChange} // Update state on slider value change
               defaultValue={searchData?.radius} // Initial value
               valueLabelDisplay="auto" // Show the value on the slider
+              marks
+              step={2}
               min={0} // Set min value
-              max={1000} // Set max value
+              max={40} // Set max value
               aria-label="Slider"
               sx={{
                 color: "#f50159",

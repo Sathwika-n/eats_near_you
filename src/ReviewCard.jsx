@@ -30,7 +30,14 @@ const ReviewCard = ({
   };
 
   return (
-    <Box className="review-card">
+    <Box
+      className="review-card"
+      onClick={() => {
+        if (mapsUrl) {
+          window.open(mapsUrl, "_blank");
+        }
+      }}
+    >
       <Box className="review-details">
         <Box className="name-time">
           <Box

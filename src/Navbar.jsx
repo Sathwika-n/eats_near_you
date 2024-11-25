@@ -12,6 +12,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import logo from "./assets/logo.png";
 import vite from "../public/vite.svg";
+import shortLogo from "../src/assets/short-logo.png";
 import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 160;
@@ -32,6 +33,7 @@ function Navbar({ window, onLogout }) {
       "/contact": "Contact Us",
       "/profile": "Profile",
       "/changePassword": "Change Password",
+      "/restaurantDetail": "Restaurant Detail",
     };
     const currentPath = location.pathname;
     setActiveItem(pathToNavItem[currentPath] || "Search"); // Fallback to "Search"
@@ -188,7 +190,7 @@ function Navbar({ window, onLogout }) {
                 flexGrow: 1,
               }}
             >
-              <img src={vite} alt="Boxcars" style={{ height: 26 }} />
+              <img src={shortLogo} alt="Boxcars" style={{ height: 40 }} />
             </Box>
             <Box sx={{ display: { xs: "none", sm: "block" } }}>
               {navItems.map((item) => (

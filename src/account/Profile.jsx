@@ -119,6 +119,7 @@ const Profile = () => {
                       rating={restaurant.rating}
                       location={restaurant.restaurant_address}
                       review={restaurant.review_text}
+                      mapsUrl={restaurant?.maps_url}
                       time={formatDistanceToNow(
                         parseISO(restaurant.created_at),
                         {

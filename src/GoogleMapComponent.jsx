@@ -3,7 +3,7 @@ import { GoogleMap, MarkerF, useLoadScript } from "@react-google-maps/api";
 
 // Map container styling
 const mapContainerStyle = {
-  minWidth: "250px",
+  minWidth: "280px",
   height: "200px", // Adjust height as needed
 };
 

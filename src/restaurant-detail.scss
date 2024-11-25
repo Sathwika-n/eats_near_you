@@ -22,41 +22,61 @@
     .restaurant-profile {
       display: flex;
       width: calc(100% - 40px);
-      // flex-direction: column;
       align-items: flex-start;
-      justify-content: flex-start;
-      // max-width: 300px;
+      justify-content: space-between;
       margin: 16px;
       box-sizing: border-box;
       padding: 20px;
       border-radius: 8px;
-      // min-width: 400px;
       background: rgba(245, 245, 220, 0.6); /* Beige */
       border: 1px solid rgba(210, 210, 200, 0.3);
       gap: 1rem;
-
       -webkit-backdrop-filter: blur(20px);
       backdrop-filter: blur(20px);
       border-radius: 10px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
       .restaurant-image {
         border-radius: 0.5rem;
         max-width: 100%;
       }
-    }
-    @media (max-width: 768px) {
-      .restaurant-profile {
-        flex-direction: column; /* Stack content vertically */
-        width: calc(100% - 20px); /* Reduce the horizontal margin */
-        padding: 16px; /* Adjust padding for smaller screens */
-        gap: 0.5rem; /* Smaller gap for compact design */
-      }
-    }
 
-    @media (max-width: 480px) {
-      .restaurant-profile {
-        width: calc(100% - 10px); /* Even smaller horizontal margin */
-        padding: 12px; /* Further reduce padding */
+      .name-image {
+        display: flex;
+        gap: 1rem;
+      }
+
+      /* Media Queries for Responsiveness */
+      @media (max-width: 768px) {
+        flex-direction: column; /* Stack items vertically */
+        align-items: center; /* Center items on smaller screens */
+        padding: 16px; /* Adjust padding for smaller screens */
+
+        .name-image {
+          flex-direction: column; /* Stack name and image vertically */
+          align-items: center; /* Center-align items */
+        }
+
+        .restaurant-image {
+          // width: 80%; /* Scale down the image */
+          max-width: 300px; /* Limit the size of the image */
+        }
+      }
+
+      @media (max-width: 480px) {
+        width: calc(100% - 20px); /* Reduce margin for very small screens */
+        padding: 12px; /* Further adjust padding */
+        display: flex;
+        align-items: flex-start;
+
+        .restaurant-image {
+          width: 100%; /* Take full width of the container */
+          max-width: 270px; /* Limit the maximum size */
+        }
+
+        .name-image {
+          gap: 0.5rem; /* Reduce gap between items */
+        }
       }
     }
 
