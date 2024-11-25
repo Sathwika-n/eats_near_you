@@ -19,11 +19,9 @@ import {
   loginUser,
   signupUser,
 } from "./services/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import Loader from "./Loader";
 import "./loader.scss";
-
-import { jwtDecode } from "jwt-decode";
 
 function LoginPage({ setIsLoggedIn }) {
   const [isSignUp, setIsSignUp] = useState(true); // Toggle between login and signup
