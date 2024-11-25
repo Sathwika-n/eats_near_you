@@ -8,11 +8,8 @@ import {
   Alert,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google"; // Import GoogleOAuthProvider
 import "./login.scss";
-import logo from "../public/vite.svg";
 
 import shortLogo from "../src/assets/short-logo.png";
 import FullLogo from "../src/assets/full-logo.png";
@@ -22,18 +19,17 @@ import {
   loginUser,
   signupUser,
 } from "./services/api";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Loader from "./Loader";
 import "./loader.scss";
 
-const clientId =
-  "http://136635546864-vbg6659ri8m8mgl5n4jgj5e0ck27auq7.apps.googleusercontent.com"; // Replace with your Google Client ID
+import { jwtDecode } from "jwt-decode";
+import GoogleSignIn from "./GoogleSignIn";
 
 function LoginPage({ setIsLoggedIn }) {
   const [isSignUp, setIsSignUp] = useState(true); // Toggle between login and signup
   const [isforgotPassword, setIsforgotPassword] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
-  const [otpRecieved, setOtpRecieved] = useState("");
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -59,8 +55,6 @@ function LoginPage({ setIsLoggedIn }) {
   const [mutationResponse, setMutationResponse] = useState(null);
 
   const [mutationState, setMutationState] = useState("");
-
-  const queryClient = useQueryClient();
 
   const signupMutation = useMutation({
     mutationFn: signupUser,
@@ -150,41 +144,6 @@ function LoginPage({ setIsLoggedIn }) {
       setMutationState("error");
     },
   });
-
-  // Handle Google Login Success
-  const handleGoogleSuccess = async (response) => {
-    const profile = response.profileObj;
-
-    try {
-      // Send Google profile to the backend
-      const res = await axios.post("http://localhost:5000/auth/google", {
-        email: profile.email,
-        name: profile.name,
-        googleId: profile.googleId,
-      });
-
-      console.log("Response from server:", res.data);
-
-      // Handle backend response
-      if (res.data.success) {
-        sessionStorage.setItem("isLoggedIn", "true");
-        sessionStorage.setItem("user", JSON.stringify(profile));
-        setIsLoggedIn(true);
-        navigate("/home");
-      } else {
-        alert("Error signing in with Google");
-      }
-    } catch (error) {
-      console.error("Google Sign-In Error:", error);
-      alert("Something went wrong");
-    }
-  };
-
-  // Handle Google Login Failure
-  const handleGoogleFailure = (response) => {
-    console.error("Google Sign-In Failed:", response);
-    alert("Google Sign-In Failed. Please try again.");
-  };
 
   const handleManualSignup = () => {
     setIsLoading(true);
@@ -408,349 +367,330 @@ function LoginPage({ setIsLoggedIn }) {
   };
 
   return (
-    <GoogleOAuthProvider clientId={clientId}>
-      {/* Wrap with GoogleOAuthProvider */}
-      <Grid container className="login-page">
-        <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6 }} className="grid-item">
-          <Box>
-            <img src={shortLogo} alt="Logo" style={{ height: 40 }} />
-          </Box>
-          <Box
-            sx={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              gap: "2rem",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {isforgotPassword ? (
-              <Typography variant="title" color="#004687">
-                Reset Password to Eats Near You
-              </Typography>
-            ) : (
-              <Typography variant="title" color="#004687">
-                {isSignUp ? "Sign up" : "Sign in"} to Eats Near You
-              </Typography>
-            )}
-            <Box className="content-box">
-              <Box className="form-content">
-                <Box className="text-fields">
-                  {isSignUp ? (
-                    <>
-                      {/* Full Name */}
-                      <Box>
-                        <TextField
-                          required
-                          name="username"
-                          type="text"
-                          placeholder="Full Name"
-                          value={formData?.username}
-                          onChange={handleInputChange}
-                          margin="normal"
-                        />
-                        {formErrors.username && (
-                          <FormHelperText error sx={{ marginLeft: 2 }}>
-                            {formErrors.username}
-                          </FormHelperText>
-                        )}
-                      </Box>
-                      {/* Email */}
-                      <Box>
-                        <TextField
-                          required
-                          name="email"
-                          type="email"
-                          placeholder="Your Email Address"
-                          value={formData?.email}
-                          onChange={handleInputChange}
-                          margin="normal"
-                        />
-                        {formErrors.email && (
-                          <FormHelperText error sx={{ marginLeft: 2 }}>
-                            {formErrors.email}
-                          </FormHelperText>
-                        )}
-                      </Box>
-                      {/* Password */}
-                      <Box>
-                        <TextField
-                          required
-                          name="password"
-                          type="password"
-                          placeholder="Your Password"
-                          value={formData?.password}
-                          onChange={handleInputChange}
-                          margin="normal"
-                        />
-                        {formErrors.password && (
-                          <FormHelperText error sx={{ marginLeft: 2 }}>
-                            {formErrors.password}
-                          </FormHelperText>
-                        )}
-                      </Box>
-                      {/* Confirm Password */}
-                      <Box>
-                        <TextField
-                          required
-                          name="confirmPassword"
-                          type="password"
-                          placeholder="Confirm Password"
-                          value={formData?.confirmPassword}
-                          onChange={handleInputChange}
-                          margin="normal"
-                        />
-                        {formErrors.confirmPassword && (
-                          <FormHelperText error sx={{ marginLeft: 2 }}>
-                            {formErrors.confirmPassword}
-                          </FormHelperText>
-                        )}
-                      </Box>
-                    </>
-                  ) : isforgotPassword ? (
-                    <>
-                      <Box>
-                        <TextField
-                          required
-                          name="email"
-                          type="email"
-                          placeholder="Your Email Address"
-                          value={formData?.email || ""}
-                          onChange={handleLoginInputChange}
-                          margin="normal"
-                        />
-                        {formErrors.email && (
-                          <FormHelperText error sx={{ marginLeft: 2 }}>
-                            {formErrors.email}
-                          </FormHelperText>
-                        )}
-                      </Box>
-                      {otpSent && (
-                        <Box
-                          sx={{
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "1rem",
-                          }}
-                        >
-                          <Box>
-                            <TextField
-                              required
-                              name="otp"
-                              type="text"
-                              placeholder="OTP Recieved on Email"
-                              value={forgotData?.otp}
-                              onChange={handleOtpInputChange}
-                              margin="normal"
-                            />
-                            {formErrors.email && (
-                              <FormHelperText error sx={{ marginLeft: 2 }}>
-                                {formErrors.email}
-                              </FormHelperText>
-                            )}
-                          </Box>
-                          <Box>
-                            <TextField
-                              required
-                              name="newPassword"
-                              type="password"
-                              placeholder="New Password"
-                              value={forgotData?.newPassword}
-                              onChange={handleOtpInputChange}
-                              margin="normal"
-                            />
-                            {formErrors.email && (
-                              <FormHelperText error sx={{ marginLeft: 2 }}>
-                                {formErrors.email}
-                              </FormHelperText>
-                            )}
-                          </Box>
-                          <Box>
-                            <TextField
-                              required
-                              name="confirmPassword"
-                              type="password"
-                              placeholder="Confirm Password"
-                              value={forgotData?.confirmPassword}
-                              onChange={handleOtpInputChange}
-                              margin="normal"
-                            />
-                            {formErrors.email && (
-                              <FormHelperText error sx={{ marginLeft: 2 }}>
-                                {formErrors.email}
-                              </FormHelperText>
-                            )}
-                          </Box>
-                        </Box>
+    <Grid container className="login-page">
+      <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6 }} className="grid-item">
+        <Box>
+          <img src={shortLogo} alt="Logo" style={{ height: 40 }} />
+        </Box>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: "2rem",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {isforgotPassword ? (
+            <Typography variant="title" color="#004687">
+              Reset Password to Eats Near You
+            </Typography>
+          ) : (
+            <Typography variant="title" color="#004687">
+              {isSignUp ? "Sign up" : "Sign in"} to Eats Near You
+            </Typography>
+          )}
+          <Box className="content-box">
+            <Box className="form-content">
+              <Box className="text-fields">
+                {isSignUp ? (
+                  <>
+                    {/* Full Name */}
+                    <Box>
+                      <TextField
+                        required
+                        name="username"
+                        type="text"
+                        placeholder="Full Name"
+                        value={formData?.username}
+                        onChange={handleInputChange}
+                        margin="normal"
+                      />
+                      {formErrors.username && (
+                        <FormHelperText error sx={{ marginLeft: 2 }}>
+                          {formErrors.username}
+                        </FormHelperText>
                       )}
-                    </>
-                  ) : (
-                    <>
-                      {/* Email */}
-                      <Box>
-                        <TextField
-                          required
-                          name="email"
-                          type="email"
-                          placeholder="Your Email Address"
-                          value={formData?.email || ""}
-                          onChange={handleLoginInputChange}
-                          margin="normal"
-                        />
-                        {formErrors.email && (
-                          <FormHelperText error sx={{ marginLeft: 2 }}>
-                            {formErrors.email}
-                          </FormHelperText>
-                        )}
+                    </Box>
+                    {/* Email */}
+                    <Box>
+                      <TextField
+                        required
+                        name="email"
+                        type="email"
+                        placeholder="Your Email Address"
+                        value={formData?.email}
+                        onChange={handleInputChange}
+                        margin="normal"
+                      />
+                      {formErrors.email && (
+                        <FormHelperText error sx={{ marginLeft: 2 }}>
+                          {formErrors.email}
+                        </FormHelperText>
+                      )}
+                    </Box>
+                    {/* Password */}
+                    <Box>
+                      <TextField
+                        required
+                        name="password"
+                        type="password"
+                        placeholder="Your Password"
+                        value={formData?.password}
+                        onChange={handleInputChange}
+                        margin="normal"
+                      />
+                      {formErrors.password && (
+                        <FormHelperText error sx={{ marginLeft: 2 }}>
+                          {formErrors.password}
+                        </FormHelperText>
+                      )}
+                    </Box>
+                    {/* Confirm Password */}
+                    <Box>
+                      <TextField
+                        required
+                        name="confirmPassword"
+                        type="password"
+                        placeholder="Confirm Password"
+                        value={formData?.confirmPassword}
+                        onChange={handleInputChange}
+                        margin="normal"
+                      />
+                      {formErrors.confirmPassword && (
+                        <FormHelperText error sx={{ marginLeft: 2 }}>
+                          {formErrors.confirmPassword}
+                        </FormHelperText>
+                      )}
+                    </Box>
+                  </>
+                ) : isforgotPassword ? (
+                  <>
+                    <Box>
+                      <TextField
+                        required
+                        name="email"
+                        type="email"
+                        placeholder="Your Email Address"
+                        value={formData?.email || ""}
+                        onChange={handleLoginInputChange}
+                        margin="normal"
+                      />
+                      {formErrors.email && (
+                        <FormHelperText error sx={{ marginLeft: 2 }}>
+                          {formErrors.email}
+                        </FormHelperText>
+                      )}
+                    </Box>
+                    {otpSent && (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "1rem",
+                        }}
+                      >
+                        <Box>
+                          <TextField
+                            required
+                            name="otp"
+                            type="text"
+                            placeholder="OTP Recieved on Email"
+                            value={forgotData?.otp}
+                            onChange={handleOtpInputChange}
+                            margin="normal"
+                          />
+                          {formErrors.email && (
+                            <FormHelperText error sx={{ marginLeft: 2 }}>
+                              {formErrors.email}
+                            </FormHelperText>
+                          )}
+                        </Box>
+                        <Box>
+                          <TextField
+                            required
+                            name="newPassword"
+                            type="password"
+                            placeholder="New Password"
+                            value={forgotData?.newPassword}
+                            onChange={handleOtpInputChange}
+                            margin="normal"
+                          />
+                          {formErrors.email && (
+                            <FormHelperText error sx={{ marginLeft: 2 }}>
+                              {formErrors.email}
+                            </FormHelperText>
+                          )}
+                        </Box>
+                        <Box>
+                          <TextField
+                            required
+                            name="confirmPassword"
+                            type="password"
+                            placeholder="Confirm Password"
+                            value={forgotData?.confirmPassword}
+                            onChange={handleOtpInputChange}
+                            margin="normal"
+                          />
+                          {formErrors.email && (
+                            <FormHelperText error sx={{ marginLeft: 2 }}>
+                              {formErrors.email}
+                            </FormHelperText>
+                          )}
+                        </Box>
                       </Box>
-                      <Box>
-                        <TextField
-                          required
-                          name="password"
-                          type="password"
-                          placeholder="Your Password"
-                          value={formData?.password || ""}
-                          onChange={handleLoginInputChange}
-                          margin="normal"
-                        />
-                        {formErrors.password && (
-                          <FormHelperText error sx={{ marginLeft: 2 }}>
-                            {formErrors.password}
-                          </FormHelperText>
-                        )}
-                      </Box>
-                    </>
-                  )}
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    gap: 2,
-                  }}
-                >
-                  {isLoading ? (
-                    <Loader />
-                  ) : isSignUp ? (
-                    <Button
-                      variant="contained"
-                      sx={{
-                        "&:focus": {
-                          outline: "none",
-                        },
-                      }}
-                      onClick={handleManualSignup}
-                    >
-                      Sign Up
-                    </Button>
-                  ) : isforgotPassword ? (
-                    otpSent ? (
-                      <Button
-                        variant="contained"
-                        onClick={handleChangePassword}
-                      >
-                        Change Password
-                      </Button>
-                    ) : (
-                      <Button variant="contained" onClick={handleSendOtp}>
-                        Send OTP
-                      </Button>
-                    )
-                  ) : (
-                    <Button variant="contained" onClick={handleManualLogin}>
-                      Sign In
-                    </Button>
-                  )}
-                  {!isSignUp &&
-                    (isforgotPassword ? (
-                      <Typography
-                        variant="clickableText"
-                        onClick={toggleSignIn}
-                        sx={{ cursor: "pointer" }}
-                      >
-                        Go back to Sign In
-                      </Typography>
-                    ) : (
-                      <Typography
-                        variant="clickableText"
-                        onClick={toggleForgotMode}
-                        sx={{ cursor: "pointer" }}
-                      >
-                        Forgot Password?
-                      </Typography>
-                    ))}
-                </Box>
-
-                <GoogleLogin
-                  clientId={clientId}
-                  buttonText={
-                    isSignUp ? "Sign Up with Google" : "Sign In with Google"
-                  }
-                  onSuccess={handleGoogleSuccess}
-                  onFailure={handleGoogleFailure}
-                  cookiePolicy={"single_host_origin"}
-                />
-                {mutationResponse && (
-                  <Alert severity={mutationState}>{mutationResponse}</Alert>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {/* Email */}
+                    <Box>
+                      <TextField
+                        required
+                        name="email"
+                        type="email"
+                        placeholder="Your Email Address"
+                        value={formData?.email || ""}
+                        onChange={handleLoginInputChange}
+                        margin="normal"
+                      />
+                      {formErrors.email && (
+                        <FormHelperText error sx={{ marginLeft: 2 }}>
+                          {formErrors.email}
+                        </FormHelperText>
+                      )}
+                    </Box>
+                    <Box>
+                      <TextField
+                        required
+                        name="password"
+                        type="password"
+                        placeholder="Your Password"
+                        value={formData?.password || ""}
+                        onChange={handleLoginInputChange}
+                        margin="normal"
+                      />
+                      {formErrors.password && (
+                        <FormHelperText error sx={{ marginLeft: 2 }}>
+                          {formErrors.password}
+                        </FormHelperText>
+                      )}
+                    </Box>
+                  </>
                 )}
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 2,
+                }}
+              >
+                {isLoading ? (
+                  <Loader />
+                ) : isSignUp ? (
+                  <Button
+                    variant="contained"
+                    sx={{
+                      "&:focus": {
+                        outline: "none",
+                      },
+                    }}
+                    onClick={handleManualSignup}
+                  >
+                    Sign Up
+                  </Button>
+                ) : isforgotPassword ? (
+                  otpSent ? (
+                    <Button variant="contained" onClick={handleChangePassword}>
+                      Change Password
+                    </Button>
+                  ) : (
+                    <Button variant="contained" onClick={handleSendOtp}>
+                      Send OTP
+                    </Button>
+                  )
+                ) : (
+                  <Button variant="contained" onClick={handleManualLogin}>
+                    Sign In
+                  </Button>
+                )}
+                {!isSignUp &&
+                  (isforgotPassword ? (
+                    <Typography
+                      variant="clickableText"
+                      onClick={toggleSignIn}
+                      sx={{ cursor: "pointer" }}
+                    >
+                      Go back to Sign In
+                    </Typography>
+                  ) : (
+                    <Typography
+                      variant="clickableText"
+                      onClick={toggleForgotMode}
+                      sx={{ cursor: "pointer" }}
+                    >
+                      Forgot Password?
+                    </Typography>
+                  ))}
               </Box>
             </Box>
           </Box>
-          <Box>
-            <Typography
-              variant="clickableText"
-              onClick={toggleAuthMode}
-              sx={{ cursor: "pointer" }}
-            >
-              {isSignUp
-                ? "Have an account? Sign In"
-                : "Don't have an account? Sign Up"}
-            </Typography>
-          </Box>
-        </Grid>
-        <Grid
-          item
-          size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
-          className="grid-item-right"
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+        </Box>
+        <Box>
+          <Typography
+            variant="clickableText"
+            onClick={toggleAuthMode}
+            sx={{ cursor: "pointer" }}
           >
-            <img
-              src={FullLogo}
-              alt="Logo"
-              style={{
-                width: "50%",
-                // height: "50%",
-              }}
-            />
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              // flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-              width: "75%",
-            }}
-          >
-            <Typography variant="reviewTitle">
-              "Discover nearby restaurants, explore detailed reviews and photos,
-              and share your own experiences with real-time Google Maps
-              integration. All in one place!"
-            </Typography>
-          </Box>
-        </Grid>
+            {isSignUp
+              ? "Have an account? Sign In"
+              : "Don't have an account? Sign Up"}
+          </Typography>
+        </Box>
       </Grid>
-    </GoogleOAuthProvider>
+      <Grid
+        item
+        size={{ xs: 12, sm: 6, md: 6, lg: 6 }}
+        className="grid-item-right"
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <img
+            src={FullLogo}
+            alt="Logo"
+            style={{
+              width: "50%",
+              // height: "50%",
+            }}
+          />
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            // flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            width: "75%",
+          }}
+        >
+          <Typography variant="reviewTitle">
+            "Discover nearby restaurants, explore detailed reviews and photos,
+            and share your own experiences with real-time Google Maps
+            integration. All in one place!"
+          </Typography>
+        </Box>
+      </Grid>
+    </Grid>
   );
 }
 
