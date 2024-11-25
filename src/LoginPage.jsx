@@ -21,11 +21,9 @@ import {
 } from "./services/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Loader from "./Loader";
-import { jwtDecode } from "jwt-decode";
 import "./loader.scss";
 
 import { jwtDecode } from "jwt-decode";
-import GoogleSignIn from "./GoogleSignIn";
 
 function LoginPage({ setIsLoggedIn }) {
   const [isSignUp, setIsSignUp] = useState(true); // Toggle between login and signup
