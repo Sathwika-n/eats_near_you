@@ -24,16 +24,15 @@ import {
 } from "./services/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Loader from "./Loader";
+import { jwtDecode } from "jwt-decode";
 import "./loader.scss";
 
-const clientId =
-  "http://136635546864-vbg6659ri8m8mgl5n4jgj5e0ck27auq7.apps.googleusercontent.com"; // Replace with your Google Client ID
+const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 function LoginPage({ setIsLoggedIn }) {
   const [isSignUp, setIsSignUp] = useState(true); // Toggle between login and signup
   const [isforgotPassword, setIsforgotPassword] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
-  const [otpRecieved, setOtpRecieved] = useState("");
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -59,8 +58,6 @@ function LoginPage({ setIsLoggedIn }) {
   const [mutationResponse, setMutationResponse] = useState(null);
 
   const [mutationState, setMutationState] = useState("");
-
-  const queryClient = useQueryClient();
 
   const signupMutation = useMutation({
     mutationFn: signupUser,
@@ -152,32 +149,61 @@ function LoginPage({ setIsLoggedIn }) {
   });
 
   // Handle Google Login Success
-  const handleGoogleSuccess = async (response) => {
-    const profile = response.profileObj;
+  // const handleGoogleSuccess = async (response) => {
+  //   console.log(response, "response");
+  //   const profile = response.profileObj;
 
-    try {
-      // Send Google profile to the backend
-      const res = await axios.post("http://localhost:5000/auth/google", {
-        email: profile.email,
-        name: profile.name,
-        googleId: profile.googleId,
+  //   // try {
+  //   //   // Send Google profile to the backend
+  //   //   signupMutation.mutate({
+  //   //     username: profile.name,
+  //   //     password: profile.googleId,
+  //   //     email: profile.email,
+  //   //   });
+
+  //   //   sessionStorage.setItem("isLoggedIn", "true");
+  //   //   sessionStorage.setItem("user", JSON.stringify(profile));
+  //   //   setIsLoggedIn(true);
+  //   //   navigate("/home");
+  //   // } catch (error) {
+  //   //   console.error("Google Sign-In Error:", error);
+  //   //   alert("Something went wrong");
+  //   // }
+  // };
+
+  const handleGoogleSuccess = (credentialResponse) => {
+    if (credentialResponse.credential) {
+      console.log("Login successful");
+      const decodedToken = jwtDecode(credentialResponse.credential);
+
+      // Log the entire decoded token to see its structure
+      console.log("Decoded Token:", decodedToken);
+
+      signupMutation.mutate({
+        user_id: decodedToken.sub,
+        username: decodedToken.name,
+        password: decodedToken.sub,
+        email: decodedToken.email,
       });
 
-      console.log("Response from server:", res.data);
-
-      // Handle backend response
-      if (res.data.success) {
-        sessionStorage.setItem("isLoggedIn", "true");
-        sessionStorage.setItem("user", JSON.stringify(profile));
-        setIsLoggedIn(true);
-        navigate("/home");
-      } else {
-        alert("Error signing in with Google");
-      }
-    } catch (error) {
-      console.error("Google Sign-In Error:", error);
-      alert("Something went wrong");
+      sessionStorage.setItem("isLoggedIn", "true");
+      sessionStorage.setItem(
+        "user",
+        JSON.stringify({
+          user_id: decodedToken.sub,
+          email: decodedToken.email,
+          username: decodedToken.name,
+        })
+      );
+      setIsLoggedIn(true);
+      navigate("/home");
+    } else {
+      console.error("Credential not found in the response");
     }
+  };
+
+  const handleLoginError = () => {
+    console.error("Login Failed");
   };
 
   // Handle Google Login Failure
@@ -659,7 +685,15 @@ function LoginPage({ setIsLoggedIn }) {
                       </Button>
                     )
                   ) : (
-                    <Button variant="contained" onClick={handleManualLogin}>
+                    <Button
+                      variant="contained"
+                      onClick={handleManualLogin}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleManualLogin;
+                        }
+                      }}
+                    >
                       Sign In
                     </Button>
                   )}

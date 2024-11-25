@@ -133,7 +133,7 @@ function RestaurantDetail() {
                 </Typography>
                 <Typography variant="body">
                   <a
-                    href={url}
+                    href={website}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{

@@ -1,5 +1,5 @@
 import React from "react";
-import { GoogleMap, MarkerF, useLoadScript } from "@react-google-maps/api";
+import { GoogleMap, Marker, useLoadScript } from "@react-google-maps/api"; //MarkerF
 
 // Map container styling
 const mapContainerStyle = {
@@ -31,7 +31,7 @@ export default function GoogleMapComponent({ location }) {
       options={options}
     >
       {/* Marker */}
-      <MarkerF
+      <Marker //MarkerF
         position={markerPosition}
         // Add any desired options here
       />
