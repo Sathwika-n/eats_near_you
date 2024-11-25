@@ -1,26 +1,6 @@
 {
   "routes": [
     {
-      "route": "/home",
-      "serve": "/index.html"
-    },
-    {
-      "route": "/profile",
-      "serve": "/index.html"
-    },
-    {
-      "route": "/changePassword",
-      "serve": "/index.html"
-    },
-    {
-      "route": "/restaurantDetail",
-      "serve": "/index.html"
-    },
-    {
-      "route": "/",
-      "serve": "/index.html"
-    },
-    {
       "route": "/*",
       "serve": "/index.html",
       "statusCode": 200
