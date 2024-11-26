@@ -2,8 +2,6 @@ name: Deploy Vite App to Azure
 
 on:
   push:
-    branches:
-      -master
 
 jobs:
   build:
