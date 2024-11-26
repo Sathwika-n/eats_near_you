@@ -2,6 +2,8 @@ name: Deploy Vite App to Azure
 
 on:
   push:
+    branches:
+      -master
 
 jobs:
   build:
@@ -12,34 +14,47 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Login to Azure using the credentials stored in secrets
+        # Login to Azure using the credentials stored in secrets
       - name: 'Login to Azure'
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Step 3: Set up Node.js environment
+
+      # Step 2: Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
+          node-version: '18.x'  # Specify the Node.js version you need
 
-      # Step 4: Install dependencies
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Step 5: Run the Vite build process (do not pass VITE_API_URL from secrets here)
-      - name: Build the Vite app
-        run: npm run build
+      # Step 4: Verify VITE_API_URL environment variable and continue
+      - name: Verify VITE_API_URL is set correctly
+        run: |
+          if [ -z "$VITE_API_URL" ]; then
+            echo "VITE_API_URL is not set, please check your GitHub secrets."
+            exit 1  # Fail the workflow if the variable is not set
+          else
+            echo "VITE_API_URL is set to $VITE_API_URL"
+          fi
+          npm run build  # Run the Vite build process
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}  # Pass the secret to the build environment
+          VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}  # Pass the secret to the build environment
+          VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}  # Pass the secret to the build environment
 
-      # Step 6: Deploy the web app using Azure credentials
+     # Deploy the web app using Azure credentials
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v3
         with:
           app-name: eatsnearyou
           package: ./dist  # specify the build directory
 
-      # Step 7: Logout from Azure
+      # Azure logout
       - name: 'Logout from Azure'
         run: |
           az logout
+
