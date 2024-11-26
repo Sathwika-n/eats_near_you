@@ -2,7 +2,7 @@ name: Deploy Vite App to Azure
 
 on:
   push:
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,11 +22,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Verify environment variable injection
+      # Step 4: Verify VITE_API_URL environment variable and continue
       - name: Verify VITE_API_URL is set correctly
         run: |
-          # List environment variables to verify the VITE_API_URL is being injected
-          printenv | grep VITE_API_URL
+          if [ -z "$VITE_API_URL" ]; then
+            echo "VITE_API_URL is not set, please check your GitHub secrets."
+            exit 1  # Fail the workflow if the variable is not set
+          else
+            echo "VITE_API_URL is set to $VITE_API_URL"
+          fi
           npm run build  # Run the Vite build process
 
       # Step 5: Deploy to Azure
