@@ -16,6 +16,7 @@ import FullLogo from "../src/assets/full-logo.png";
 import {
   changePassword,
   forgotPassword,
+  googleSignIn,
   loginUser,
   signupUser,
 } from "./services/api";
@@ -23,6 +24,8 @@ import { useMutation } from "@tanstack/react-query";
 import Loader from "./Loader";
 import "./loader.scss";
 import NotifyAlert from "./NotifyAlert";
+import { jwtDecode } from "jwt-decode";
+import { GoogleLogin } from "@react-oauth/google";
 
 function LoginPage({ setIsLoggedIn }) {
   const [isSignUp, setIsSignUp] = useState(true); // Toggle between login and signup
@@ -50,9 +53,6 @@ function LoginPage({ setIsLoggedIn }) {
 
   const [otpSentEmail, setOtpSentEmail] = useState("");
 
-  const [mutationResponse, setMutationResponse] = useState(null);
-
-  const [mutationState, setMutationState] = useState("");
   const [alertOpen, setAlertOpen] = useState({
     openState: false,
     severity: "info", // Default severity
@@ -116,6 +116,25 @@ function LoginPage({ setIsLoggedIn }) {
     },
   });
 
+  const googleSignInMutation = useMutation({
+    mutationFn: googleSignIn,
+    onSuccess: (data) => {
+      console.log("Mutation succeeded!", data);
+      handleOpen("success", data?.message);
+      sessionStorage.setItem("isLoggedIn", "true");
+      sessionStorage.setItem("user", JSON.stringify(data?.result));
+
+      setIsLoggedIn(true);
+      setIsLoading(false);
+      navigate("/home");
+    },
+    onError: (error) => {
+      console.error("Mutation failed!", error);
+      handleOpen("error", error);
+      setIsLoading(false);
+    },
+  });
+
   const forgotMutation = useMutation({
     mutationFn: forgotPassword,
     onSuccess: (data) => {
@@ -160,7 +179,6 @@ function LoginPage({ setIsLoggedIn }) {
 
   const handleManualSignup = () => {
     setIsLoading(true);
-    setMutationResponse(null);
     let isValid = true;
     const errors = {
       username: "",
@@ -214,8 +232,6 @@ function LoginPage({ setIsLoggedIn }) {
   };
   const handleManualLogin = () => {
     setIsLoading(true);
-    setMutationResponse(null);
-
     // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData?.email)) {
@@ -253,8 +269,6 @@ function LoginPage({ setIsLoggedIn }) {
 
   const handleSendOtp = () => {
     setIsLoading(true);
-    setMutationResponse(null);
-
     // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData?.email)) {
@@ -280,7 +294,6 @@ function LoginPage({ setIsLoggedIn }) {
 
   const handleChangePassword = () => {
     setIsLoading(true);
-    setMutationResponse(null);
 
     changePasswordMutation.mutate({
       old_password: forgotData?.otp,
@@ -301,8 +314,6 @@ function LoginPage({ setIsLoggedIn }) {
     setIsSignUp(false);
     setIsforgotPassword(false);
     setOtpSent(false);
-    setMutationResponse(null);
-    setMutationState("");
   };
 
   const handleInputChange = (e) => {
@@ -378,7 +389,25 @@ function LoginPage({ setIsLoggedIn }) {
       [name]: value,
     }));
   };
+  const handleLoginSuccess = (credentialResponse) => {
+    if (credentialResponse.credential) {
+      console.log("Login successful");
+      const decodedToken = jwtDecode(credentialResponse.credential);
+      console.log("Decoded Token:", decodedToken);
 
+      googleSignInMutation.mutate({
+        email: decodedToken?.email,
+        username: decodedToken?.name,
+        sub: decodedToken?.sub,
+      });
+    } else {
+      console.error("Credential not found in the response");
+    }
+  };
+
+  const handleLoginError = () => {
+    console.error("Login Failed");
+  };
   return (
     <Grid container className="login-page">
       <Grid item size={{ xs: 12, sm: 6, md: 6, lg: 6 }} className="grid-item">
@@ -654,6 +683,10 @@ function LoginPage({ setIsLoggedIn }) {
                       Forgot Password?
                     </Typography>
                   ))}
+                <GoogleLogin
+                  onSuccess={handleLoginSuccess}
+                  onError={handleLoginError}
+                />
               </Box>
             </Box>
           </Box>

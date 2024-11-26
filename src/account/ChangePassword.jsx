@@ -65,7 +65,7 @@ const ChangePassword = () => {
     },
     onError: (error) => {
       console.error("Mutation failed!", error);
-      handleOpen("error", "Password update failed!");
+      handleOpen("error", error?.response?.data?.detail);
       setIsLoading(false);
       setFormData({
         oldPassword: "",

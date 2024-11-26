@@ -16,6 +16,11 @@ export const signupUser = async (postData) => {
   return response.data;
 };
 
+export const googleSignIn = async (postData) => {
+  const response = await api.post("/google-auth", postData);
+  return response.data;
+};
+
 export const userFeedback = async (postData) => {
   const response = await api.post("/submit-feedback", postData);
   return response.data;
