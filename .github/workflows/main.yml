@@ -1,50 +1,39 @@
-name: TechWorld CI CD
+name: Deploy Vite App to Azure
 
-on: 
+on:
   push:
-
-env:
-  AZURE_WEBAPP_NAME: eatsnearyou  # set this to your application's name
-  AZURE_WEBAPP_PACKAGE_PATH: I  # set this to the path to your web app project
-  NODE_VERSION: '18.x'
-
+  
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    
+
     steps:
-    # Checkout the repo
-    - name: 'Checkout GitHub Action'
-      uses: actions/checkout@v3
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    # Login to Azure using the credentials stored in secrets
-    - name: 'Login to Azure'
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # Step 2: Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'  # Specify the Node.js version you need
 
-    # Setup Node.js version
-    - name: 'Setup Node.js'
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
 
-    # Install dependencies, build, and run tests
-    - name: 'npm install, build, and test'
-      run: |
-        npm install
-        npm run build --if-present
-        npm run test --if-present
-      working-directory: .
+      # Step 4: Set environment variables for the build
+      - name: Set environment variables for Vite build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}  # Use the VITE_API_URL secret from GitHub Secrets
+        run: |
+          # Optional: You can print the value to verify the environment variable is set
+          echo "VITE_API_URL=$VITE_API_URL"
+          npm run build  # Run the Vite build process
 
-    # Deploy the web app using Azure credentials
-    - name: 'Deploy to Azure Web App'
-      uses: azure/webapps-deploy@v3
-      with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        package: ./dist  # specify the build directory
-
-    # Azure logout
-    - name: 'Logout from Azure'
-      run: |
-        az logout
+      # Step 5: Deploy to Azure
+      - name: Deploy to Azure
+        uses: Azure/webapps-deploy@v2
+        with:
+          app-name: '<YOUR-AZURE-APP-NAME>'  # Replace with your Azure app name
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}  # Use Azure publish profile secret
