@@ -12,6 +12,7 @@ import "./search.scss";
 import "./loader.scss";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import noImage from "../src/assets/noImage.png";
+import NotifyAlert from "./NotifyAlert";
 
 function Search() {
   const [mutationError, setMutationError] = useState(null);
@@ -24,6 +25,26 @@ function Search() {
     location: "Hyderabad",
     radius: "10",
   });
+  const [alertOpen, setAlertOpen] = useState({
+    openState: false,
+    severity: "info", // Default severity
+    message: "", // Message to display
+  });
+  const handleOpen = (severity, message) => {
+    setAlertOpen({
+      openState: true,
+      severity: severity,
+      message: message,
+    });
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    event.stopPropagation();
+    setAlertOpen((prev) => ({ ...prev, openState: false }));
+  };
 
   const settings = {
     dots: true, // Pagination dots below slider
@@ -64,8 +85,8 @@ function Search() {
     mutationFn: reverseGeocode,
     onSuccess: (data) => {
       console.log("Mutation succeeded!", data);
+      handleOpen("success", "Location Fetched!");
       setIsLocationLoading(false);
-      // setLocation(data?.location);
       setSearchData((prevValues) => ({
         ...prevValues,
         location: data?.location,
@@ -73,6 +94,7 @@ function Search() {
     },
     onError: (error) => {
       console.error("Mutation failed!", error);
+      handleOpen("error", "Unable to fetch location!");
       setLocationError(error?.response?.data?.detail);
       setIsLocationLoading(false);
     },
@@ -125,6 +147,12 @@ function Search() {
   };
   return (
     <Box className="search-container">
+      <NotifyAlert
+        open={alertOpen?.openState}
+        onClose={handleClose}
+        severity={alertOpen?.severity}
+        message={alertOpen?.message}
+      />
       <Box className="search-form">
         <Typography variant="title" className="text-class">
           Start Exploring

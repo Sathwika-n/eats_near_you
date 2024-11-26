@@ -11,6 +11,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { changePassword } from "../services/api";
 import Loader from "../Loader";
+import NotifyAlert from "../NotifyAlert";
 
 const ChangePassword = () => {
   // State for the form fields
@@ -29,23 +30,42 @@ const ChangePassword = () => {
   const [mutationResponse, setMutationResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [mutationState, setMutationState] = useState("");
+  const [alertOpen, setAlertOpen] = useState({
+    openState: false,
+    severity: "info", // Default severity
+    message: "", // Message to display
+  });
+  const handleOpen = (severity, message) => {
+    setAlertOpen({
+      openState: true,
+      severity: severity,
+      message: message,
+    });
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    event.stopPropagation();
+    setAlertOpen((prev) => ({ ...prev, openState: false }));
+  };
 
   const changePasswordMutation = useMutation({
     mutationFn: changePassword,
     onSuccess: (data) => {
       console.log("Mutation succeeded!", data);
-      setMutationResponse(data?.message);
+      handleOpen("success", "Password updated!");
       setIsLoading(false);
       setFormData({
         oldPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
-      setMutationState("success");
     },
     onError: (error) => {
       console.error("Mutation failed!", error);
-      setMutationResponse(error?.response?.data?.detail);
+      handleOpen("error", "Password update failed!");
       setIsLoading(false);
       setFormData({
         oldPassword: "",
@@ -124,6 +144,12 @@ const ChangePassword = () => {
 
   return (
     <Box className="change-password">
+      <NotifyAlert
+        open={alertOpen?.openState}
+        onClose={handleClose}
+        severity={alertOpen?.severity}
+        message={alertOpen?.message}
+      />
       <Typography variant="columnHeading" color="#004687">
         CHANGE PASSWORD
       </Typography>

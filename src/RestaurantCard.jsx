@@ -8,6 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import { addFavorite, removeFavorite } from "./services/api";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
+import NotifyAlert from "./NotifyAlert";
 
 const RestaurantCard = ({
   name,
@@ -21,6 +22,26 @@ const RestaurantCard = ({
   const locationR = useLocation();
   const navigate = useNavigate();
   const [isFavoriteCard, setIsFavoriteCard] = useState(isFavorite ?? true);
+  const [alertOpen, setAlertOpen] = useState({
+    openState: false,
+    severity: "info", // Default severity
+    message: "", // Message to display
+  });
+  const handleOpen = (severity, message) => {
+    setAlertOpen({
+      openState: true,
+      severity: severity,
+      message: message,
+    });
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    event.stopPropagation();
+    setAlertOpen((prev) => ({ ...prev, openState: false }));
+  };
 
   useEffect(() => {
     if (locationR.pathname === "/profile") {
@@ -37,10 +58,12 @@ const RestaurantCard = ({
   const addMutation = useMutation({
     mutationFn: addFavorite, // Ensure addFavorite is the mutation function
     onSuccess: (data) => {
+      handleOpen("success", "Added Favorite!");
       console.log("Added Favorite", data);
       queryClient.invalidateQueries(["userFavourites"]);
     },
     onError: (error) => {
+      handleOpen("error", "Unable to Add Favorite!");
       setIsFavoriteCard((prev) => !prev);
       console.error("Unable to add Favorite", error);
     },
@@ -49,10 +72,12 @@ const RestaurantCard = ({
   const removeMutation = useMutation({
     mutationFn: removeFavorite, // Ensure addFavorite is the mutation function
     onSuccess: (data) => {
+      handleOpen("success", "Removed Favorite!");
       console.log("Removed Favorite", data);
       queryClient.invalidateQueries(["userFavourites"]);
     },
     onError: (error) => {
+      handleOpen("error", "Unable to Remove Favorite!");
       setIsFavoriteCard((prev) => !prev);
       console.error("Unable to remove Favorite", error);
     },
@@ -83,6 +108,12 @@ const RestaurantCard = ({
         });
       }}
     >
+      <NotifyAlert
+        open={alertOpen?.openState}
+        onClose={handleClose}
+        severity={alertOpen?.severity}
+        message={alertOpen?.message}
+      />
       {/* Image Section */}
       <img src={imageUrl} alt={`${name}`} className="restaurant-image" />
 

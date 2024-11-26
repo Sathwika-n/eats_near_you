@@ -22,6 +22,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import Loader from "./Loader";
 import "./loader.scss";
+import NotifyAlert from "./NotifyAlert";
 
 function LoginPage({ setIsLoggedIn }) {
   const [isSignUp, setIsSignUp] = useState(true); // Toggle between login and signup
@@ -52,13 +53,32 @@ function LoginPage({ setIsLoggedIn }) {
   const [mutationResponse, setMutationResponse] = useState(null);
 
   const [mutationState, setMutationState] = useState("");
+  const [alertOpen, setAlertOpen] = useState({
+    openState: false,
+    severity: "info", // Default severity
+    message: "", // Message to display
+  });
+  const handleOpen = (severity, message) => {
+    setAlertOpen({
+      openState: true,
+      severity: severity,
+      message: message,
+    });
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    event.stopPropagation();
+    setAlertOpen((prev) => ({ ...prev, openState: false }));
+  };
 
   const signupMutation = useMutation({
     mutationFn: signupUser,
     onSuccess: (data) => {
-      console.log("Mutation succeeded!", data);
-      setMutationState("success");
-      setMutationResponse(data?.message);
+      console.log("Mutation succeeded!", data?.message);
+      handleOpen("success", data?.message);
       setIsSignUp(false);
 
       console.log("isSignUp:", isSignUp);
@@ -72,8 +92,7 @@ function LoginPage({ setIsLoggedIn }) {
     },
     onError: (error) => {
       console.error("Mutation failed!", error);
-      setMutationState("error");
-      setMutationResponse(error?.response?.data?.detail);
+      handleOpen("error", error?.response?.data?.detail);
       setIsLoading(false);
     },
   });
@@ -81,7 +100,8 @@ function LoginPage({ setIsLoggedIn }) {
   const loginMutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
-      console.log("Mutation succeeded!", data);
+      console.log("Mutation succeeded!", data?.message);
+      handleOpen("success", data?.message);
       sessionStorage.setItem("isLoggedIn", "true");
       sessionStorage.setItem("user", JSON.stringify(data?.result));
 
@@ -91,8 +111,7 @@ function LoginPage({ setIsLoggedIn }) {
     },
     onError: (error) => {
       console.error("Mutation failed!", error?.response?.data?.detail);
-      setMutationState("error");
-      setMutationResponse(error?.response?.data?.detail);
+      handleOpen("error", error?.response?.data?.detail);
       setIsLoading(false);
     },
   });
@@ -103,12 +122,11 @@ function LoginPage({ setIsLoggedIn }) {
       console.log("Mutation succeeded!", data);
       setIsLoading(false);
       setOtpSent(true);
-      setMutationState("success");
-      setMutationResponse(data?.message);
+      handleOpen("success", data?.message);
     },
     onError: (error) => {
       console.error("Mutation failed!", error);
-      setMutationResponse(error?.response?.data?.detail);
+      handleOpen("error", error?.response?.data?.detail);
       setIsLoading(false);
       setOtpSent(false);
     },
@@ -117,28 +135,26 @@ function LoginPage({ setIsLoggedIn }) {
     mutationFn: changePassword,
     onSuccess: (data) => {
       console.log("Mutation succeeded!", data);
-      setMutationResponse(data?.message);
+      handleOpen("success", data?.message);
       setIsLoading(false);
       setForgotData({
         otp: "",
         newPassword: "",
         confirmPassword: "",
       });
-      setMutationState("success");
       setIsSignUp(false);
       setIsforgotPassword(false);
       setOtpSent(false);
     },
     onError: (error) => {
       console.error("Mutation failed!", error);
-      setMutationResponse(error?.response?.data?.detail);
+      handleOpen("error", error?.response?.data?.detail);
       setIsLoading(false);
       setFormData({
         oldPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
-      setMutationState("error");
     },
   });
 
@@ -379,6 +395,12 @@ function LoginPage({ setIsLoggedIn }) {
             justifyContent: "center",
           }}
         >
+          <NotifyAlert
+            open={alertOpen?.openState}
+            onClose={handleClose}
+            severity={alertOpen?.severity}
+            message={alertOpen?.message}
+          />
           {isforgotPassword ? (
             <Typography variant="title" color="#004687">
               Reset Password to Eats Near You

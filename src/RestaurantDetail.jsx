@@ -26,6 +26,7 @@ import ReviewCard from "./ReviewCard";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { parseISO, formatDistanceToNow } from "date-fns";
+import NotifyAlert from "./NotifyAlert";
 function RestaurantDetail() {
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -41,13 +42,33 @@ function RestaurantDetail() {
   const [review, setReview] = useState({ rating: 0, review: "" });
   const [open, setOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
+  const [alertOpen, setAlertOpen] = useState({
+    openState: false,
+    severity: "info", // Default severity
+    message: "", // Message to display
+  });
+  const handleOpen = (severity, message) => {
+    setAlertOpen({
+      openState: true,
+      severity: severity,
+      message: message,
+    });
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    event.stopPropagation();
+    setAlertOpen((prev) => ({ ...prev, openState: false }));
+  };
 
   const handleImageClick = (imageUrl) => {
     setSelectedImage(imageUrl);
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleDialogClose = () => {
     setOpen(false);
     setSelectedImage("");
   };
@@ -76,7 +97,9 @@ function RestaurantDetail() {
     mutationFn: addReview,
     onSuccess: (data) => {
       console.log("Mutation succeeded!", data);
+      handleOpen("success", "Review Added");
       queryClient.invalidateQueries(["userReviewsByRestaurant"]);
+
       // setMutationResponse(data?.message);
       // setIsLoading(false);
       setReview({
@@ -87,6 +110,7 @@ function RestaurantDetail() {
     },
     onError: (error) => {
       console.error("Mutation failed!", error);
+      handleOpen("error", "Cannot add Review");
       // setMutationResponse(error?.response?.data?.detail);
       // setIsLoading(false);
     },
@@ -106,6 +130,12 @@ function RestaurantDetail() {
         <Loader />
       ) : (
         <Box className="restaurant-page">
+          <NotifyAlert
+            open={alertOpen?.openState}
+            onClose={handleClose}
+            severity={alertOpen?.severity}
+            message={alertOpen?.message}
+          />
           <Box className="restaurant-profile">
             <Box className="name-image">
               <Box>
@@ -195,7 +225,7 @@ function RestaurantDetail() {
                 </ImageList>
                 <Dialog
                   open={open}
-                  onClose={handleClose}
+                  onClose={handleDialogClose}
                   fullWidth
                   // maxWidth="lg"
                   sx={{
@@ -218,7 +248,7 @@ function RestaurantDetail() {
                     bgcolor="transparent"
                   >
                     <IconButton
-                      onClick={handleClose}
+                      onClick={handleDialogClose}
                       aria-label="close"
                       sx={{
                         color: "white", // White icon for contrast
