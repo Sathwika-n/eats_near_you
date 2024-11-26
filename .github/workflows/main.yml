@@ -10,13 +10,20 @@ jobs:
     steps:
       # Step 1: Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+        # Login to Azure using the credentials stored in secrets
+      - name: 'Login to Azure'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
 
       # Step 2: Set up Node.js environment
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'  # Specify the Node.js version you need
+          node-version: '18.x'  # Specify the Node.js version you need
 
       # Step 3: Install dependencies
       - name: Install dependencies
@@ -35,9 +42,15 @@ jobs:
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}  # Pass the secret to the build environment
 
-      # Step 5: Deploy to Azure
-      - name: Deploy to Azure
-        uses: Azure/webapps-deploy@v2
+     # Deploy the web app using Azure credentials
+      - name: 'Deploy to Azure Web App'
+        uses: azure/webapps-deploy@v3
         with:
-          app-name: '<YOUR-AZURE-APP-NAME>'  # Replace with your Azure app name
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}  # Use Azure publish profile secret
+          app-name: eatsnearyou
+          package: ./dist  # specify the build directory
+
+      # Azure logout
+      - name: 'Logout from Azure'
+        run: |
+          az logout
+
