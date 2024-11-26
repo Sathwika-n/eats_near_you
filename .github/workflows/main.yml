@@ -32,6 +32,8 @@ jobs:
             echo "VITE_API_URL is set to $VITE_API_URL"
           fi
           npm run build  # Run the Vite build process
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}  # Pass the secret to the build environment
 
       # Step 5: Deploy to Azure
       - name: Deploy to Azure
