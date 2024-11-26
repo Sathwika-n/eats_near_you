@@ -110,7 +110,7 @@ function LoginPage({ setIsLoggedIn }) {
       navigate("/home");
     },
     onError: (error) => {
-      console.error("Mutation failed!", error?.response?.data?.detail);
+      console.error("Mutation failed!", error);
       handleOpen("error", error?.response?.data?.detail);
       setIsLoading(false);
     },
