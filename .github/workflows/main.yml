@@ -31,10 +31,10 @@ jobs:
 
     # Install dependencies, build, and run tests
     - name: 'npm install, build, and test'
-      env:
-        VITE_API_URL: ${{ secrets.VITE_API_URL }}
-        VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
-        VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
+      # env:
+      #   VITE_API_URL: ${{ secrets.VITE_API_URL }}
+      #   VITE_GOOGLE_MAPS_API_KEY: ${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}
+      #   VITE_GOOGLE_CLIENT_ID: ${{ secrets.VITE_GOOGLE_CLIENT_ID }}
       run: |
         npm install
         npm run build --if-present
