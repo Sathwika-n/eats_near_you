@@ -7,7 +7,7 @@ const api = axios.create({
   withCredentials: true,
 });
 
-console.log(import.meta.env.VITE_API_URL, "baseURL");
+console.log(import.meta.env, "baseURL");
 export const loginUser = async (postData) => {
   const response = await api.post("/login", postData);
   return response.data;
