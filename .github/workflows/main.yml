@@ -22,13 +22,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Set environment variables for the build
-      - name: Set environment variables for Vite build
-        env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}  # Use the VITE_API_URL secret from GitHub Secrets
+      # Step 4: Verify environment variable injection
+      - name: Verify VITE_API_URL is set correctly
         run: |
-          # Optional: You can print the value to verify the environment variable is set
-          echo "VITE_API_URL=$VITE_API_URL"
+          # List environment variables to verify the VITE_API_URL is being injected
+          printenv | grep VITE_API_URL
           npm run build  # Run the Vite build process
 
       # Step 5: Deploy to Azure
