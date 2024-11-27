@@ -415,7 +415,6 @@ function RestaurantDetail() {
                       fullWidth
                       multiline
                       rows={4}
-                      required
                       name="review"
                       type="text"
                       placeholder="Please Enter Your Review"
