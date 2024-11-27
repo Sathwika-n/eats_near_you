@@ -9,24 +9,17 @@ import Loader from "../Loader";
 import { parseISO, formatDistanceToNow } from "date-fns";
 
 const Profile = () => {
-  // const userId = "f295f193-42ac-4fff-b495-4f29dc634386";
   const {
     data: reviewsData,
     isLoading: isReviewsLoading,
     error: isReviewsError,
-  } = useUserReviews(
-    // userId
-    JSON.parse(sessionStorage.getItem("user"))?.user_id
-  );
+  } = useUserReviews(JSON.parse(sessionStorage.getItem("user"))?.user_id);
 
   const {
     data: favouritesData,
     isLoading: isFavouritesLoading,
     error: isFavouritesError,
-  } = useUserFavourites(
-    // userId
-    JSON.parse(sessionStorage.getItem("user"))?.user_id
-  );
+  } = useUserFavourites(JSON.parse(sessionStorage.getItem("user"))?.user_id);
 
   // Utility function for title casing
   function toTitleCase(text) {

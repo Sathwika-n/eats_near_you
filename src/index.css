@@ -36,6 +36,10 @@ body {
     #dfbaf7 100%
   );
   background: linear-gradient(0deg, #ecffc1 0%, #ffe6cc 50%, #dfbaf7 100%);
+
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+  overflow-x: hidden;
 }
 
 h1 {
@@ -73,4 +77,18 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

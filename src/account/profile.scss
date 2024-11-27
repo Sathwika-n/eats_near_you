@@ -59,6 +59,11 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
+      .restaurants-list {
+        max-height: 31.25rem;
+        overflow-y: scroll;
+        scrollbar-width: thin;
+      }
     }
     .my-reviews {
       width: calc(100% - 40px); /* 20px left + 20px right */
@@ -79,7 +84,28 @@
       flex-direction: column;
       .grid {
         display: flex;
-        // flex-direction: column;
+        max-height: 31.25rem;
+        overflow-y: scroll;
+        scrollbar-width: thin; /* For Firefox */
+      }
+
+      /* For WebKit browsers (Chrome, Safari, Edge) */
+      .grid::-webkit-scrollbar {
+        width: 8px; /* Width of the vertical scrollbar */
+      }
+
+      .grid::-webkit-scrollbar-track {
+        background: #f1f1f1; /* Track background */
+        border-radius: 10px; /* Rounded corners for the track */
+      }
+
+      .grid::-webkit-scrollbar-thumb {
+        background: #888; /* Thumb color */
+        border-radius: 10px; /* Rounded corners for the thumb */
+      }
+
+      .grid::-webkit-scrollbar-thumb:hover {
+        background: #555; /* Darker thumb on hover */
       }
     }
   }

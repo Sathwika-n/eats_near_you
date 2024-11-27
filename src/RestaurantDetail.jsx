@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./restaurant-detail.scss";
 import {
   Box,
@@ -61,10 +61,16 @@ function RestaurantDetail() {
     } = {},
   } = data || {};
 
+  console.log(isFavorite, "isFavorite");
+
   const [review, setReview] = useState({ rating: 0, review: "" });
   const [open, setOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
-  const [isFavoriteCard, setIsFavoriteCard] = useState(isFavorite ?? true);
+  const [isFavoriteCard, setIsFavoriteCard] = useState(false);
+
+  useEffect(() => {
+    setIsFavoriteCard(isFavorite);
+  }, [isFavorite]);
 
   const addMutation = useMutation({
     mutationFn: addFavorite, // Ensure addFavorite is the mutation function

@@ -93,7 +93,9 @@
         flex-direction: column;
         .grid {
           display: flex;
-          // flex-direction: column;
+          max-height: 31.25rem;
+          overflow-y: scroll;
+          scrollbar-width: thin;
         }
         .review-card {
           min-height: 200px;
