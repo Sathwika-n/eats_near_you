@@ -13,6 +13,8 @@ import LoginPage from "./LoginPage";
 import Profile from "./account/Profile";
 import ChangePassword from "./account/ChangePassword";
 import RestaurantDetail from "./RestaurantDetail";
+import { AlertProvider } from "./AlertProvider";
+import ScrollToTop from "./ScrollToTop";
 
 function App() {
   const location = useLocation();
@@ -45,6 +47,7 @@ function App() {
     sessionStorage.removeItem("isLoggedIn");
     sessionStorage.removeItem("lastPath");
     sessionStorage.removeItem("token");
+    sessionStorage.removeItem("nearby-restaurants");
     setIsLoggedIn(false);
     navigate("/"); // Redirect to login page
   };
@@ -52,40 +55,43 @@ function App() {
   return (
     <Box className="main-class">
       {/* Show Navbar only if logged in and not on login page */}
+      <ScrollToTop />
       {isLoggedIn && location.pathname !== "/" && (
         <Navbar onLogout={handleLogout} />
       )}
-      <Routes>
-        {/* Handle root path */}
-        <Route
-          path="/"
-          element={
-            isLoggedIn ? (
-              <Navigate to="/home" replace /> // Default to home if no redirection needed
-            ) : (
-              <LoginPage setIsLoggedIn={setIsLoggedIn} />
-            )
-          }
-        />
+      <AlertProvider>
+        <Routes>
+          {/* Handle root path */}
+          <Route
+            path="/"
+            element={
+              isLoggedIn ? (
+                <Navigate to="/home" replace /> // Default to home if no redirection needed
+              ) : (
+                <LoginPage setIsLoggedIn={setIsLoggedIn} />
+              )
+            }
+          />
 
-        {/* Protected routes */}
-        <Route
-          path="/home"
-          element={isLoggedIn ? <HomePage /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/profile"
-          element={isLoggedIn ? <Profile /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/changePassword"
-          element={isLoggedIn ? <ChangePassword /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/restaurantDetail"
-          element={isLoggedIn ? <RestaurantDetail /> : <Navigate to="/" />}
-        />
-      </Routes>
+          {/* Protected routes */}
+          <Route
+            path="/home"
+            element={isLoggedIn ? <HomePage /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/profile"
+            element={isLoggedIn ? <Profile /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/changePassword"
+            element={isLoggedIn ? <ChangePassword /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/restaurantDetail"
+            element={isLoggedIn ? <RestaurantDetail /> : <Navigate to="/" />}
+          />
+        </Routes>
+      </AlertProvider>
     </Box>
   );
 }

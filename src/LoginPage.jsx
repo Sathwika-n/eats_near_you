@@ -5,7 +5,6 @@ import {
   Typography,
   TextField,
   FormHelperText,
-  Alert,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useNavigate } from "react-router-dom";
@@ -23,9 +22,9 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import Loader from "./Loader";
 import "./loader.scss";
-import NotifyAlert from "./NotifyAlert";
 import { jwtDecode } from "jwt-decode";
 import { GoogleLogin } from "@react-oauth/google";
+import { useAlert } from "./AlertProvider";
 
 function LoginPage({ setIsLoggedIn }) {
   const [isSignUp, setIsSignUp] = useState(true); // Toggle between login and signup
@@ -39,6 +38,7 @@ function LoginPage({ setIsLoggedIn }) {
   });
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [isGLoading, setIsGLoading] = useState(false);
   const [formErrors, setFormErrors] = useState({
     username: "",
     password: "",
@@ -53,35 +53,15 @@ function LoginPage({ setIsLoggedIn }) {
 
   const [otpSentEmail, setOtpSentEmail] = useState("");
 
-  const [alertOpen, setAlertOpen] = useState({
-    openState: false,
-    severity: "info", // Default severity
-    message: "", // Message to display
-  });
-  const handleOpen = (severity, message) => {
-    setAlertOpen({
-      openState: true,
-      severity: severity,
-      message: message,
-    });
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    event.stopPropagation();
-    setAlertOpen((prev) => ({ ...prev, openState: false }));
-  };
+  const { showAlert } = useAlert();
 
   const signupMutation = useMutation({
     mutationFn: signupUser,
     onSuccess: (data) => {
       console.log("Mutation succeeded!", data?.message);
-      handleOpen("success", data?.message);
+      showAlert("success", data?.message);
       setIsSignUp(false);
 
-      console.log("isSignUp:", isSignUp);
       setIsLoading(false);
       setFormData({
         username: "",
@@ -92,7 +72,7 @@ function LoginPage({ setIsLoggedIn }) {
     },
     onError: (error) => {
       console.error("Mutation failed!", error);
-      handleOpen("error", error?.response?.data?.detail);
+      showAlert("error", error?.response?.data?.detail);
       setIsLoading(false);
     },
   });
@@ -101,7 +81,7 @@ function LoginPage({ setIsLoggedIn }) {
     mutationFn: loginUser,
     onSuccess: (data) => {
       console.log("Mutation succeeded!", data?.message);
-      handleOpen("success", data?.message);
+      showAlert("success", data?.message);
       sessionStorage.setItem("isLoggedIn", "true");
       sessionStorage.setItem("user", JSON.stringify(data?.result));
 
@@ -111,7 +91,7 @@ function LoginPage({ setIsLoggedIn }) {
     },
     onError: (error) => {
       console.error("Mutation failed", error);
-      handleOpen("error", error?.response?.data?.detail);
+      showAlert("error", error?.response?.data?.detail);
       setIsLoading(false);
     },
   });
@@ -120,18 +100,18 @@ function LoginPage({ setIsLoggedIn }) {
     mutationFn: googleSignIn,
     onSuccess: (data) => {
       console.log("Mutation succeeded!", data);
-      handleOpen("success", data?.message);
+      showAlert("success", data?.message);
       sessionStorage.setItem("isLoggedIn", "true");
       sessionStorage.setItem("user", JSON.stringify(data?.result));
 
       setIsLoggedIn(true);
-      setIsLoading(false);
+      setIsGLoading(false);
       navigate("/home");
     },
     onError: (error) => {
       console.error("Mutation failed!", error);
-      handleOpen("error", error);
-      setIsLoading(false);
+      showAlert("error", error);
+      setIsGLoading(false);
     },
   });
 
@@ -141,11 +121,11 @@ function LoginPage({ setIsLoggedIn }) {
       console.log("Mutation succeeded!", data);
       setIsLoading(false);
       setOtpSent(true);
-      handleOpen("success", data?.message);
+      showAlert("success", data?.message);
     },
     onError: (error) => {
       console.error("Mutation failed!", error);
-      handleOpen("error", error?.response?.data?.detail);
+      showAlert("error", error?.response?.data?.detail);
       setIsLoading(false);
       setOtpSent(false);
     },
@@ -154,7 +134,7 @@ function LoginPage({ setIsLoggedIn }) {
     mutationFn: changePassword,
     onSuccess: (data) => {
       console.log("Mutation succeeded!", data);
-      handleOpen("success", data?.message);
+      showAlert("success", data?.message);
       setIsLoading(false);
       setForgotData({
         otp: "",
@@ -167,7 +147,7 @@ function LoginPage({ setIsLoggedIn }) {
     },
     onError: (error) => {
       console.error("Mutation failed!", error);
-      handleOpen("error", error?.response?.data?.detail);
+      showAlert("error", error?.response?.data?.detail);
       setIsLoading(false);
       setFormData({
         oldPassword: "",
@@ -391,9 +371,7 @@ function LoginPage({ setIsLoggedIn }) {
   };
   const handleLoginSuccess = (credentialResponse) => {
     if (credentialResponse.credential) {
-      console.log("Login successful");
       const decodedToken = jwtDecode(credentialResponse.credential);
-      console.log("Decoded Token:", decodedToken);
 
       googleSignInMutation.mutate({
         email: decodedToken?.email,
@@ -402,11 +380,16 @@ function LoginPage({ setIsLoggedIn }) {
       });
     } else {
       console.error("Credential not found in the response");
+      setIsGLoading(false);
+      showAlert("error", "Credential not found in the response");
     }
   };
 
   const handleLoginError = () => {
-    console.error("Login Failed");
+    setIsGLoading(false);
+  };
+  const handleGLoginStart = () => {
+    setIsGLoading(true); // Start loading when login is initiated
   };
   return (
     <Grid container className="login-page">
@@ -424,12 +407,6 @@ function LoginPage({ setIsLoggedIn }) {
             justifyContent: "center",
           }}
         >
-          <NotifyAlert
-            open={alertOpen?.openState}
-            onClose={handleClose}
-            severity={alertOpen?.severity}
-            message={alertOpen?.message}
-          />
           {isforgotPassword ? (
             <Typography variant="title" color="#004687">
               Reset Password to Eats Near You
@@ -683,10 +660,16 @@ function LoginPage({ setIsLoggedIn }) {
                       Forgot Password?
                     </Typography>
                   ))}
-                <GoogleLogin
-                  onSuccess={handleLoginSuccess}
-                  onError={handleLoginError}
-                />
+
+                {isGLoading ? (
+                  <Loader />
+                ) : (
+                  <GoogleLogin
+                    onSuccess={handleLoginSuccess}
+                    onError={handleLoginError}
+                    onClick={handleGLoginStart}
+                  />
+                )}
               </Box>
             </Box>
           </Box>

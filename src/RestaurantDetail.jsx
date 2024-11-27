@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./restaurant-detail.scss";
 import {
   Box,
@@ -23,55 +23,29 @@ import { useLocation } from "react-router-dom";
 import Loader from "./Loader";
 import GoogleMapComponent from "./GoogleMapComponent";
 import ReviewCard from "./ReviewCard";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import { addFavorite, removeFavorite } from "./services/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
 import { parseISO, formatDistanceToNow } from "date-fns";
-import NotifyAlert from "./NotifyAlert";
+import { useAlert } from "./AlertProvider";
+
 function RestaurantDetail() {
   const location = useLocation();
   const queryClient = useQueryClient();
+  const { showAlert } = useAlert();
+
+  const user_id = JSON.parse(sessionStorage.getItem("user"))?.user_id;
+
   const { data, isLoading, error } = useRestaurantDetails(
-    location.state.restaurant_id
+    location.state.restaurant_id,
+    user_id
   );
   const {
     data: reviewData,
     isLoading: isReviewsLoading,
     error: isError,
   } = useUserReviewsByRestaurant(location.state.restaurant_id);
-
-  const [review, setReview] = useState({ rating: 0, review: "" });
-  const [open, setOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState("");
-  const [alertOpen, setAlertOpen] = useState({
-    openState: false,
-    severity: "info", // Default severity
-    message: "", // Message to display
-  });
-  const handleOpen = (severity, message) => {
-    setAlertOpen({
-      openState: true,
-      severity: severity,
-      message: message,
-    });
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    event.stopPropagation();
-    setAlertOpen((prev) => ({ ...prev, openState: false }));
-  };
-
-  const handleImageClick = (imageUrl) => {
-    setSelectedImage(imageUrl);
-    setOpen(true);
-  };
-
-  const handleDialogClose = () => {
-    setOpen(false);
-    setSelectedImage("");
-  };
 
   const {
     details: {
@@ -83,8 +57,52 @@ function RestaurantDetail() {
       photos,
       reviews,
       url,
+      isFavorite,
     } = {},
   } = data || {};
+
+  const [review, setReview] = useState({ rating: 0, review: "" });
+  const [open, setOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
+  const [isFavoriteCard, setIsFavoriteCard] = useState(isFavorite ?? true);
+
+  const addMutation = useMutation({
+    mutationFn: addFavorite, // Ensure addFavorite is the mutation function
+    onSuccess: (data) => {
+      showAlert("success", "Added Favorite!");
+      console.log("Added Favorite", data);
+      queryClient.invalidateQueries(["userFavourites"]);
+    },
+    onError: (error) => {
+      showAlert("error", "Unable to Add Favorite!");
+      setIsFavoriteCard((prev) => !prev);
+      console.error("Unable to add Favorite", error);
+    },
+  });
+
+  const removeMutation = useMutation({
+    mutationFn: removeFavorite, // Ensure addFavorite is the mutation function
+    onSuccess: (data) => {
+      showAlert("success", "Removed Favorite!");
+      console.log("Removed Favorite", data);
+      queryClient.invalidateQueries(["userFavourites"]);
+    },
+    onError: (error) => {
+      showAlert("error", "Unable to Remove Favorite!");
+      setIsFavoriteCard((prev) => !prev);
+      console.error("Unable to remove Favorite", error);
+    },
+  });
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpen(false);
+    setSelectedImage("");
+  };
 
   const handleReviewChange = (event) => {
     const { name, value } = event.target;
@@ -97,31 +115,61 @@ function RestaurantDetail() {
     mutationFn: addReview,
     onSuccess: (data) => {
       console.log("Mutation succeeded!", data);
-      handleOpen("success", "Review Added");
+      showAlert("success", "Review Added");
       queryClient.invalidateQueries(["userReviewsByRestaurant"]);
-
-      // setMutationResponse(data?.message);
-      // setIsLoading(false);
       setReview({
         rating: 0,
         review: "",
       });
-      // setMutationState("success");
     },
     onError: (error) => {
       console.error("Mutation failed!", error);
-      handleOpen("error", "Cannot add Review");
-      // setMutationResponse(error?.response?.data?.detail);
-      // setIsLoading(false);
+      showAlert("error", "Cannot add Review");
     },
   });
   const handleSubmitReview = () => {
     addReviewMutation.mutate({
-      user_id: JSON.parse(sessionStorage.getItem("user"))?.user_id,
+      user_id: user_id,
       restaurant_id: location.state.restaurant_id,
       rating: review?.rating,
       review_text: review?.review,
     });
+  };
+
+  const handleFavoriteToggle = () => {
+    setIsFavoriteCard((prev) => !prev);
+    const restaurants = JSON.parse(
+      sessionStorage.getItem("nearby-restaurants") || "[]"
+    );
+    if (
+      restaurants.length &&
+      restaurants.some(
+        (restaurant) => restaurant.id === location.state.restaurant_id
+      )
+    ) {
+      sessionStorage.setItem(
+        "nearby-restaurants",
+        JSON.stringify(
+          restaurants.map((restaurant) =>
+            restaurant.id === location.state.restaurant_id
+              ? { ...restaurant, isFavorite: !restaurant.isFavorite }
+              : restaurant
+          )
+        )
+      );
+    }
+
+    if (isFavoriteCard) {
+      removeMutation.mutate({
+        user_id: user_id,
+        restaurant_id: location.state.restaurant_id,
+      });
+    } else if (!isFavoriteCard) {
+      addMutation.mutate({
+        user_id: user_id,
+        restaurant_id: location.state.restaurant_id,
+      });
+    }
   };
 
   return (
@@ -130,15 +178,9 @@ function RestaurantDetail() {
         <Loader />
       ) : (
         <Box className="restaurant-page">
-          <NotifyAlert
-            open={alertOpen?.openState}
-            onClose={handleClose}
-            severity={alertOpen?.severity}
-            message={alertOpen?.message}
-          />
           <Box className="restaurant-profile">
             <Box className="name-image">
-              <Box>
+              <Box sx={{ position: "relative" }}>
                 <img
                   className="restaurant-image"
                   src={`https://maps.googleapis.com/maps/api/place/photo?maxheight=200&photoreference=${
@@ -147,8 +189,31 @@ function RestaurantDetail() {
                     import.meta.env.VITE_GOOGLE_MAPS_API_KEY
                   }&w=248&fit=crop&auto=format`}
                   alt={name}
+                  style={{ display: "block", width: "100%", height: "auto" }} // Ensures the image fills its container
                 />
+                <IconButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFavoriteToggle();
+                  }}
+                  sx={{
+                    position: "absolute",
+                    top: "1rem",
+                    right: "1rem",
+                    backgroundColor: isFavoriteCard ? "#fc7b6b" : "#e0e0e0",
+                    color: isFavoriteCard ? "#fff" : "#000",
+                    "&:hover": {
+                      backgroundColor: isFavoriteCard ? "#e25445" : "#d0d0d0",
+                    },
+                    "&:focus": {
+                      outline: "none",
+                    },
+                  }}
+                >
+                  {isFavoriteCard ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                </IconButton>
               </Box>
+
               <Box
                 sx={{
                   display: "flex",

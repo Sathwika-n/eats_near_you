@@ -11,7 +11,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { changePassword } from "../services/api";
 import Loader from "../Loader";
-import NotifyAlert from "../NotifyAlert";
+import { useAlert } from "../AlertProvider";
 
 const ChangePassword = () => {
   // State for the form fields
@@ -27,35 +27,14 @@ const ChangePassword = () => {
     newPassword: "",
     confirmPassword: "",
   });
-  const [mutationResponse, setMutationResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [mutationState, setMutationState] = useState("");
-  const [alertOpen, setAlertOpen] = useState({
-    openState: false,
-    severity: "info", // Default severity
-    message: "", // Message to display
-  });
-  const handleOpen = (severity, message) => {
-    setAlertOpen({
-      openState: true,
-      severity: severity,
-      message: message,
-    });
-  };
-
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    event.stopPropagation();
-    setAlertOpen((prev) => ({ ...prev, openState: false }));
-  };
+  const { showAlert } = useAlert();
 
   const changePasswordMutation = useMutation({
     mutationFn: changePassword,
     onSuccess: (data) => {
       console.log("Mutation succeeded!", data);
-      handleOpen("success", "Password updated!");
+      showAlert("success", "Password updated!");
       setIsLoading(false);
       setFormData({
         oldPassword: "",
@@ -65,14 +44,13 @@ const ChangePassword = () => {
     },
     onError: (error) => {
       console.error("Mutation failed!", error);
-      handleOpen("error", error?.response?.data?.detail);
+      showAlert("error", error?.response?.data?.detail);
       setIsLoading(false);
       setFormData({
         oldPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
-      setMutationState("error");
     },
   });
 
@@ -122,8 +100,6 @@ const ChangePassword = () => {
       email: JSON.parse(sessionStorage.getItem("user"))?.email,
       new_password: formData?.newPassword,
     });
-
-    console.log(formData);
   };
 
   const handleInputChange = (e) => {
@@ -144,12 +120,6 @@ const ChangePassword = () => {
 
   return (
     <Box className="change-password">
-      <NotifyAlert
-        open={alertOpen?.openState}
-        onClose={handleClose}
-        severity={alertOpen?.severity}
-        message={alertOpen?.message}
-      />
       <Typography variant="columnHeading" color="#004687">
         CHANGE PASSWORD
       </Typography>
@@ -226,9 +196,6 @@ const ChangePassword = () => {
             <Button variant="regular" onClick={handleChangePassword}>
               Change Password
             </Button>
-          )}
-          {mutationResponse && (
-            <Alert severity={mutationState}>{mutationResponse}</Alert>
           )}
         </Box>
       </Box>

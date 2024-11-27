@@ -21,6 +21,9 @@ const NotifyAlert = ({
       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       autoHideDuration={autoHideDuration}
       onClose={onClose}
+      sx={{
+        zIndex: 1400, // Adjust as needed, default Material-UI z-index for modals is 1300
+      }}
     >
       <Alert onClose={onClose} severity={severity} sx={{ width: "100%" }}>
         <Typography variant="body">{message}</Typography>

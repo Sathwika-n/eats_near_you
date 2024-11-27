@@ -14,6 +14,7 @@ import logo from "./assets/logo.png";
 import vite from "../public/vite.svg";
 import shortLogo from "../src/assets/short-logo.png";
 import { useNavigate } from "react-router-dom";
+import { KeyboardArrowDown } from "@mui/icons-material";
 
 const drawerWidth = 160;
 const navItems = ["Search", "About", "Contact Us"];
@@ -46,33 +47,39 @@ function Navbar({ window, onLogout }) {
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
-  const getNavBackground = () => {
-    if (activeItem === "Search") return "#82b6d9";
-    else if (activeItem === "About") return "#A0E77D";
-    else if (activeItem === "Contact Us") return "#ef8677";
-  };
-
   const handleNavClick = (item) => {
     if (item === "Search") {
-      if (location.pathname === "/home") {
-        // Scroll to the top of the page if we are on /home
-        const section = document.getElementById("search");
-        if (section) {
-          section.scrollIntoView({ behavior: "smooth" });
-        }
-      } else if (location.pathname === "/") {
+      if (location.pathname === "/home" || location.pathname === "/") {
+        // Scroll to the Search section
         const section = document.getElementById("search");
         if (section) {
           section.scrollIntoView({ behavior: "smooth" });
         }
       } else {
-        navigate("/", { replace: true }); // Navigate to the home page without full reload
+        navigate("/", { replace: true });
+        setTimeout(() => {
+          const section = document.getElementById("search");
+          if (section) {
+            section.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 300); // Delay to ensure the page transition completes
       }
     } else if (item === "About" || item === "Contact Us") {
       const sectionId = item.toLowerCase().replace(" ", "");
-      const section = document.getElementById(sectionId);
-      if (section) {
-        section.scrollIntoView({ behavior: "smooth" });
+      if (location.pathname === "/home" || location.pathname === "/") {
+        // Scroll directly if on the Search page
+        const section = document.getElementById(sectionId);
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth" });
+        }
+      } else {
+        navigate("/", { replace: true });
+        setTimeout(() => {
+          const section = document.getElementById(sectionId);
+          if (section) {
+            section.scrollIntoView({ behavior: "smooth" });
+          }
+        }, 300); // Delay to allow navigation to complete
       }
     } else {
       const navToPath = {
@@ -82,8 +89,37 @@ function Navbar({ window, onLogout }) {
     }
   };
 
+  // const handleNavClick = (item) => {
+  //   if (item === "Search") {
+  //     if (location.pathname === "/home") {
+  //       // Scroll to the top of the page if we are on /home
+  //       const section = document.getElementById("search");
+  //       if (section) {
+  //         section.scrollIntoView({ behavior: "smooth" });
+  //       }
+  //     } else if (location.pathname === "/") {
+  //       const section = document.getElementById("search");
+  //       if (section) {
+  //         section.scrollIntoView({ behavior: "smooth" });
+  //       }
+  //     } else {
+  //       navigate("/", { replace: true }); // Navigate to the home page without full reload
+  //     }
+  //   } else if (item === "About" || item === "Contact Us") {
+  //     const sectionId = item.toLowerCase().replace(" ", "");
+  //     const section = document.getElementById(sectionId);
+  //     if (section) {
+  //       section.scrollIntoView({ behavior: "smooth" });
+  //     }
+  //   } else {
+  //     const navToPath = {
+  //       Profile: "/profile",
+  //     };
+  //     navigate(navToPath[item]);
+  //   }
+  // };
+
   const handleMenuClick = (event) => {
-    console.log("Menu clicked"); // Debug
     setAnchorEl(event.currentTarget);
   };
 
@@ -162,7 +198,6 @@ function Navbar({ window, onLogout }) {
             WebkitBackdropFilter: "blur(4px)", // Correct property for WebKit browsers
             backdropFilter: "blur(4px)", // Blur effect for supported browsers
             border: "1px solid rgba(255, 255, 255, 0)", // Transparent border
-            zIndex: 1300, // Ensure navbar is on top of other elements
           }}
           className="appbar"
         >
@@ -190,7 +225,7 @@ function Navbar({ window, onLogout }) {
                 flexGrow: 1,
               }}
             >
-              <img src={shortLogo} alt="Boxcars" style={{ height: 40 }} />
+              <img src={shortLogo} alt="EatsNearYou" style={{ height: 40 }} />
             </Box>
             <Box sx={{ display: { xs: "none", sm: "block" } }}>
               {navItems.map((item) => (
@@ -242,16 +277,15 @@ function Navbar({ window, onLogout }) {
               >
                 <PersonOutlineOutlinedIcon />
                 Account
+                <KeyboardArrowDown />
               </Button>
               <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
               >
-                {console.log("Menu rendered")} {/* Debug rendering */}
                 <MenuItem
                   onClick={() => {
-                    console.log("Navigating to profile"); // Debug
                     handleMenuClose();
                     navigate("/profile");
                   }}
@@ -279,11 +313,22 @@ function Navbar({ window, onLogout }) {
           }}
         >
           <Box
-            onClick={() => setMobileOpen(false)}
-            sx={{ textAlign: "center" }}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
           >
-            <img src={logo} alt="Logo" style={{ height: 26 }} />
-            <List sx={{ display: "flex", flexDirection: "column" }}>
+            <img src={shortLogo} alt="EatsNearYou" style={{ height: 40 }} />
+            <List
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                justifyContent: "flex-start",
+              }}
+            >
               {navItems.map((item) => (
                 <Button
                   key={item}
@@ -309,7 +354,10 @@ function Navbar({ window, onLogout }) {
                       fontWeight: "500",
                     },
                   }}
-                  onClick={() => handleNavClick(item)}
+                  onClick={() => {
+                    handleNavClick(item);
+                    setMobileOpen(false); // Close drawer when a nav item is selected
+                  }}
                 >
                   {item}
                 </Button>
@@ -326,7 +374,6 @@ function Navbar({ window, onLogout }) {
                 }}
                 onClick={handleMenuClick} // Open dropdown menu in Drawer
               >
-                <PersonOutlineOutlinedIcon />
                 Account
               </Button>
               <Menu
@@ -336,7 +383,7 @@ function Navbar({ window, onLogout }) {
               >
                 <MenuItem
                   onClick={() => {
-                    console.log("Navigating to profile");
+                    setMobileOpen(false);
                     handleMenuClose();
                     navigate("/profile");
                   }}
@@ -346,7 +393,7 @@ function Navbar({ window, onLogout }) {
 
                 <MenuItem
                   onClick={() => {
-                    console.log("Navigating to changePassword");
+                    setMobileOpen(false);
                     handleMenuClose();
                     navigate("/changePassword");
                   }}
@@ -356,6 +403,7 @@ function Navbar({ window, onLogout }) {
 
                 <MenuItem
                   onClick={() => {
+                    setMobileOpen(false);
                     handleMenuClose();
                     onLogout();
                   }}

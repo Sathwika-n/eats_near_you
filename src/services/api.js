@@ -78,8 +78,11 @@ const fetchUserFavourites = async (userId) => {
   const response = await api.get(`/maps/user_favorites/${userId}`);
   return response.data;
 };
-const fetchRestaurantDetails = async (restaurantId) => {
-  const response = await api.get(`/maps/restaurant_details/${restaurantId}`);
+const fetchRestaurantDetails = async (restaurantId, userId) => {
+  const response = await api.get(`/maps/restaurant_details/${restaurantId}`, {
+    params: { user_id: userId },
+  });
+  console.log("request", restaurantId, userId);
   return response.data;
 };
 
@@ -105,11 +108,11 @@ export const useUserFavourites = (userId) => {
     enabled: !!userId, // Ensures query runs only when `userId` is provided
   });
 };
-export const useRestaurantDetails = (restaurantId) => {
+export const useRestaurantDetails = (restaurantId, userId) => {
   return useQuery({
-    queryKey: ["restaurantDetails", restaurantId],
-    queryFn: () => fetchRestaurantDetails(restaurantId),
-    enabled: !!restaurantId,
+    queryKey: ["restaurantDetails", restaurantId, userId],
+    queryFn: () => fetchRestaurantDetails(restaurantId, userId),
+    enabled: !!restaurantId && !!userId,
   });
 };
 

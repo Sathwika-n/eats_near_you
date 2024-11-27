@@ -28,6 +28,14 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background: #ecffc1;
+  background: -webkit-linear-gradient(
+    0deg,
+    #ecffc1 0%,
+    #ffe6cc 50%,
+    #dfbaf7 100%
+  );
+  background: linear-gradient(0deg, #ecffc1 0%, #ffe6cc 50%, #dfbaf7 100%);
 }
 
 h1 {

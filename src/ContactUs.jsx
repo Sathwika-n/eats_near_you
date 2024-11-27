@@ -3,28 +3,35 @@ import "./contact.scss";
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { userFeedback } from "./services/api";
 import { useMutation } from "@tanstack/react-query";
+import { useAlert } from "./AlertProvider";
 
 const ContactUs = () => {
   const [feedback, setFeedback] = useState("");
+  const { showAlert } = useAlert();
 
   const feedbackMutation = useMutation({
     mutationFn: userFeedback,
     onSuccess: (data) => {
       console.log("Mutation succeeded!", data);
+      showAlert("success", data?.message);
     },
     onError: (error) => {
       console.error("Mutation failed!", error?.response?.data?.detail);
+      showAlert("error", error?.response?.data?.detail);
     },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    feedbackMutation.mutate({
-      user_id: JSON.parse(sessionStorage.getItem("user"))?.user_id,
-      feedback: feedback,
-    });
-    console.log("Feedback submitted: ", feedback);
-    setFeedback("");
+    if (feedback !== "") {
+      feedbackMutation.mutate({
+        user_id: JSON.parse(sessionStorage.getItem("user"))?.user_id,
+        feedback: feedback,
+      });
+      setFeedback("");
+    } else {
+      showAlert("error", "Please fill the field!");
+    }
   };
 
   return (
@@ -40,12 +47,12 @@ const ContactUs = () => {
         <Typography variant="columnHeading">Get in Touch</Typography>
         <Box>
           <Typography variant="body">
-            <strong>Email:</strong> support@eatsnearyou.com
+            <strong>Email:</strong> projectworkyou@gmail.com
           </Typography>
         </Box>
         <Box>
           <Typography variant="body">
-            <strong>Phone:</strong> +123 456 7890
+            <strong>Phone:</strong> +1 (744)-437-0918
           </Typography>
         </Box>
         <Box>
@@ -68,7 +75,7 @@ const ContactUs = () => {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            gap: 2,
+            gap: 1,
           }}
         >
           <Box>
@@ -81,42 +88,60 @@ const ContactUs = () => {
               {JSON.parse(sessionStorage.getItem("user"))?.email}
             </Typography>
           </Box>
-          <Box>
-            <TextField
-              className="text-field-class"
-              fullWidth
-              multiline
-              rows={4}
-              required
-              name="message"
-              type="text"
-              placeholder="Please Enter Your Feedback"
-              value={feedback}
-              onChange={(e) => {
-                setFeedback(e.target.value);
-              }}
-              margin="normal"
-            />
-          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            <Box>
+              <TextField
+                className="text-field-class"
+                fullWidth
+                multiline
+                rows={4}
+                required
+                name="message"
+                type="text"
+                placeholder="Please Enter Your Feedback"
+                value={feedback}
+                onChange={(e) => {
+                  setFeedback(e.target.value);
+                }}
+                margin="normal"
+              />
+            </Box>
 
-          <Button variant="contained" onClick={handleSubmit}>
-            Submit Feedback
-          </Button>
+            <Button variant="contained" onClick={handleSubmit}>
+              Submit Feedback
+            </Button>
+          </Box>
         </Box>
       </Box>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "1rem",
+        }}
+      >
+        <Box className="social-media">
+          <Typography variant="body">
+            Follow Us for the Latest Updates. Stay connected for dining tips and
+            more:
+          </Typography>
+        </Box>
 
-      <Box className="social-media">
-        <Typography variant="body">
-          Follow Us for the Latest Updates. Stay connected for dining tips and
-          more:
-        </Typography>
-      </Box>
-
-      <Box className="response-time">
-        <Typography variant="body">
-          We strive to respond to all inquiries within 24 hours. Thank you for
-          being part of our community!
-        </Typography>
+        <Box className="response-time">
+          <Typography variant="body">
+            We strive to respond to all inquiries within 24 hours. Thank you for
+            being part of our community!
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );

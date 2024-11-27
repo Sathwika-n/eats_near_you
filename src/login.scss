@@ -8,15 +8,11 @@
     flex-direction: column;
     justify-content: space-between;
     gap: 1rem;
+    background: white;
 
     .content-box {
       display: flex;
       flex-direction: column;
-      //   width: 400px;
-      //   background: #cfe7fa;
-      //   background: linear-gradient(to bottom, #cfe7fa 0%, #6393c1 100%);
-
-      //   border-radius: 12px;
       .form-content {
         display: flex;
         flex-direction: column;
@@ -32,14 +28,6 @@
     }
   }
   .grid-item-right {
-    background: #ecffc1;
-    background: -webkit-linear-gradient(
-      0deg,
-      #ecffc1 0%,
-      #ffe6cc 50%,
-      #dfbaf7 100%
-    );
-    background: linear-gradient(0deg, #ecffc1 0%, #ffe6cc 50%, #dfbaf7 100%);
     height: 100vh;
 
     display: flex;
